@@ -2,7 +2,10 @@ OPT ?= -O0
 CC = gcc -Wall -std=c11 -g $(OPT)
 
 all:
-	make -s create_report
+	rm -f raport3b.txt
+	make -s create_report_for_one_optimisation_level OPT=-O0
+	make -s create_report_for_one_optimisation_level OPT=-O3
+	make -s create_report_for_one_optimisation_level OPT=-Os
 
 static:
 	$(CC) -c library.c
@@ -173,48 +176,20 @@ tests_for_report:
 	echo "\n	===creating and deleting 100, 200 and 300 blocks from tmp file merged from long files (2000 rows)==="
 	make -s test_create_and_remove_blocks
 
-create_report:
-	rm -f raport3b.txt
+create_report_for_one_optimisation_level:
 	make clean
-	make -s main_static OPT=-O0
+	make -s main_static
 	echo "\n\n\n\n\n*****STATIC $(OPT)*****" >> raport3b.txt
 	echo "\n\n\n\n\n*****STATIC $(OPT)*****"
 	make -s tests_for_report
-	make -s main_shared OPT=-O0
+	make -s main_shared
 	echo "\n\n\n\n\n*****SHARED $(OPT)*****" >> raport3b.txt
 	echo "\n\n\n\n\n*****SHARED $(OPT)*****"
 	make -s tests_for_report
-	make -s main_dynamic OPT=-O0
+	make -s main_dynamic
 	echo "\n\n\n\n\n*****DYNAMIC $(OPT)*****" >> raport3b.txt
 	echo "\n\n\n\n\n*****DYNAMIC $(OPT)*****"
 	make -s tests_for_report
-	make clean
 
-	make -s main_static OPT=-O3
-	echo "\n\n\n\n\n*****STATIC $(OPT)*****" >> raport3b.txt
-	echo "\n\n\n\n\n*****STATIC $(OPT)*****"
-	make -s tests_for_report
-	make -s main_shared OPT=-O3
-	echo "\n\n\n\n\n*****SHARED $(OPT)*****" >> raport3b.txt
-	echo "\n\n\n\n\n*****SHARED $(OPT)*****"
-	make -s tests_for_report
-	make -s main_dynamic OPT=-O3
-	echo "\n\n\n\n\n*****DYNAMIC $(OPT)*****" >> raport3b.txt
-	echo "\n\n\n\n\n*****DYNAMIC $(OPT)*****"
-	make -s tests_for_report
-	make clean
-
-	make -s main_static OPT=-Os
-	echo "\n\n\n\n\n*****STATIC $(OPT)*****" >> raport3b.txt
-	echo "\n\n\n\n\n*****STATIC $(OPT)*****"
-	make -s tests_for_report
-	make -s main_shared OPT=-Os
-	echo "\n\n\n\n\n*****SHARED $(OPT)*****" >> raport3b.txt
-	echo "\n\n\n\n\n*****SHARED $(OPT)*****"
-	make -s tests_for_report
-	make -s main_dynamic OPT=-Os
-	echo "\n\n\n\n\n*****DYNAMIC $(OPT)*****" >> raport3b.txt
-	echo "\n\n\n\n\n*****DYNAMIC $(OPT)*****"
-	make -s tests_for_report
 
 

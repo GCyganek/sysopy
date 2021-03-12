@@ -12,4 +12,4 @@ all:
 	make static shared
 
 clean:
-	rm -f *.o *.a *.so *.out
+	rm -f *.o *.a *.so

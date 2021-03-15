@@ -175,16 +175,16 @@ tests_for_report:
 create_report:
 	rm -f raport3a.txt
 	make -s main_static
-	echo "\n*****STATIC*****" >> raport3a.txt
-	echo "\n*****STATIC*****"
+	echo "\n\n\n*****STATIC*****" >> raport3a.txt
+	echo "\n\n\n*****STATIC*****"
 	make -s tests_for_report
 	make -s main_shared
-	echo "\n*****SHARED*****" >> raport3a.txt
-	echo "\n*****SHARED*****"
+	echo "\n\n\n*****SHARED*****" >> raport3a.txt
+	echo "\n\n\n*****SHARED*****"
 	make -s tests_for_report
 	make -s main_dynamic
-	echo "\n*****DYNAMIC*****" >> raport3a.txt
-	echo "\n*****DYNAMIC*****"
+	echo "\n\n\n*****DYNAMIC*****" >> raport3a.txt
+	echo "\n\n\n*****DYNAMIC*****"
 	make -s tests_for_report
 
 

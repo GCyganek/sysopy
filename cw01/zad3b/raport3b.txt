@@ -37,7 +37,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.010000
+real time:  0.000000
 user time:  0.000000
  sys time:  0.000000
 
@@ -83,9 +83,9 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.020000
+real time:  0.030000
 user time:  0.010000
- sys time:  0.000000
+ sys time:  0.010000
 
   delete_block
 real time:  0.000000
@@ -118,8 +118,8 @@ user time:  0.000000
 
   merge_file_sequence
 real time:  0.010000
-user time:  0.010000
- sys time:  0.000000
+user time:  0.000000
+ sys time:  0.010000
 
 	===long files (2000 rows) big merges (100 merges) and big block remove and create===
 
@@ -130,8 +130,8 @@ user time:  0.000000
 
   merge_file_sequence
 real time:  0.060000
-user time:  0.030000
- sys time:  0.020000
+user time:  0.040000
+ sys time:  0.010000
 
   delete_block
 real time:  0.000000
@@ -156,18 +156,18 @@ user time:  0.000000
  sys time:  0.000000
 
   create_and_remove_blocks
-real time:  0.030000
-user time:  0.010000
- sys time:  0.010000
+real time:  0.050000
+user time:  0.020000
+ sys time:  0.020000
 
   create_and_remove_blocks
 real time:  0.070000
-user time:  0.050000
+user time:  0.040000
  sys time:  0.030000
 
   create_and_remove_blocks
 real time:  0.100000
-user time:  0.040000
+user time:  0.050000
  sys time:  0.050000
 
 
@@ -184,7 +184,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.010000
+real time:  0.000000
 user time:  0.000000
  sys time:  0.000000
 
@@ -208,7 +208,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.010000
+real time:  0.000000
 user time:  0.000000
  sys time:  0.000000
 
@@ -230,7 +230,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.010000
+real time:  0.000000
 user time:  0.000000
  sys time:  0.000000
 
@@ -255,7 +255,7 @@ user time:  0.000000
 
   merge_file_sequence
 real time:  0.030000
-user time:  0.010000
+user time:  0.020000
  sys time:  0.000000
 
   delete_block
@@ -276,7 +276,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.000000
+real time:  0.010000
 user time:  0.000000
  sys time:  0.000000
 
@@ -288,9 +288,9 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.010000
-user time:  0.000000
- sys time:  0.010000
+real time:  0.020000
+user time:  0.010000
+ sys time:  0.000000
 
 	===long files (2000 rows) big merges (100 merges) and big block remove and create===
 
@@ -300,9 +300,9 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.060000
-user time:  0.040000
- sys time:  0.010000
+real time:  0.070000
+user time:  0.030000
+ sys time:  0.030000
 
   delete_block
 real time:  0.000000
@@ -333,13 +333,13 @@ user time:  0.020000
 
   create_and_remove_blocks
 real time:  0.070000
-user time:  0.050000
- sys time:  0.010000
+user time:  0.030000
+ sys time:  0.030000
 
   create_and_remove_blocks
-real time:  0.100000
-user time:  0.050000
- sys time:  0.050000
+real time:  0.090000
+user time:  0.070000
+ sys time:  0.030000
 
 
 
@@ -413,7 +413,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.000000
+real time:  0.010000
 user time:  0.000000
  sys time:  0.000000
 
@@ -425,8 +425,8 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.030000
-user time:  0.020000
+real time:  0.020000
+user time:  0.010000
  sys time:  0.000000
 
   delete_block
@@ -447,7 +447,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.010000
+real time:  0.000000
 user time:  0.000000
  sys time:  0.000000
 
@@ -459,7 +459,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.020000
+real time:  0.010000
 user time:  0.010000
  sys time:  0.000000
 
@@ -472,8 +472,8 @@ user time:  0.000000
 
   merge_file_sequence
 real time:  0.060000
-user time:  0.020000
- sys time:  0.030000
+user time:  0.040000
+ sys time:  0.010000
 
   delete_block
 real time:  0.000000
@@ -483,7 +483,7 @@ user time:  0.000000
   create_block
 real time:  0.000000
 user time:  0.000000
- sys time:  0.000000
+ sys time:  0.010000
 
 	===creating and deleting 100, 200 and 300 blocks from tmp file merged from long files (2000 rows)===
 
@@ -498,19 +498,19 @@ user time:  0.000000
  sys time:  0.000000
 
   create_and_remove_blocks
-real time:  0.030000
-user time:  0.010000
- sys time:  0.010000
-
-  create_and_remove_blocks
-real time:  0.070000
-user time:  0.050000
+real time:  0.040000
+user time:  0.020000
  sys time:  0.020000
 
   create_and_remove_blocks
-real time:  0.090000
-user time:  0.050000
- sys time:  0.050000
+real time:  0.070000
+user time:  0.030000
+ sys time:  0.040000
+
+  create_and_remove_blocks
+real time:  0.100000
+user time:  0.060000
+ sys time:  0.030000
 
 
 
@@ -538,7 +538,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.000000
+real time:  0.010000
 user time:  0.000000
  sys time:  0.000000
 
@@ -596,9 +596,9 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.040000
-user time:  0.020000
- sys time:  0.000000
+real time:  0.030000
+user time:  0.010000
+ sys time:  0.010000
 
   delete_block
 real time:  0.000000
@@ -618,7 +618,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.010000
+real time:  0.000000
 user time:  0.000000
  sys time:  0.000000
 
@@ -642,9 +642,9 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.070000
+real time:  0.080000
 user time:  0.050000
- sys time:  0.010000
+ sys time:  0.020000
 
   delete_block
 real time:  0.000000
@@ -652,7 +652,7 @@ user time:  0.000000
  sys time:  0.000000
 
   create_block
-real time:  0.010000
+real time:  0.000000
 user time:  0.000000
  sys time:  0.000000
 
@@ -664,24 +664,24 @@ user time:  0.000000
  sys time:  0.000000
 
   write_files_to_tmp
-real time:  0.000000
+real time:  0.010000
 user time:  0.000000
  sys time:  0.000000
 
   create_and_remove_blocks
-real time:  0.040000
+real time:  0.030000
 user time:  0.020000
  sys time:  0.010000
 
   create_and_remove_blocks
-real time:  0.060000
-user time:  0.040000
- sys time:  0.020000
+real time:  0.070000
+user time:  0.030000
+ sys time:  0.030000
 
   create_and_remove_blocks
-real time:  0.090000
-user time:  0.060000
- sys time:  0.030000
+real time:  0.100000
+user time:  0.090000
+ sys time:  0.010000
 
 
 
@@ -721,7 +721,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.020000
+real time:  0.010000
 user time:  0.000000
  sys time:  0.000000
 
@@ -768,8 +768,8 @@ user time:  0.000000
 
   merge_file_sequence
 real time:  0.030000
-user time:  0.010000
- sys time:  0.010000
+user time:  0.020000
+ sys time:  0.000000
 
   delete_block
 real time:  0.000000
@@ -802,8 +802,8 @@ user time:  0.000000
 
   merge_file_sequence
 real time:  0.020000
-user time:  0.010000
- sys time:  0.000000
+user time:  0.000000
+ sys time:  0.010000
 
 	===long files (2000 rows) big merges (100 merges) and big block remove and create===
 
@@ -813,9 +813,9 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.070000
-user time:  0.060000
- sys time:  0.010000
+real time:  0.090000
+user time:  0.050000
+ sys time:  0.020000
 
   delete_block
 real time:  0.000000
@@ -841,18 +841,18 @@ user time:  0.000000
 
   create_and_remove_blocks
 real time:  0.040000
-user time:  0.020000
- sys time:  0.010000
-
-  create_and_remove_blocks
-real time:  0.060000
-user time:  0.040000
+user time:  0.010000
  sys time:  0.020000
 
   create_and_remove_blocks
-real time:  0.090000
-user time:  0.060000
+real time:  0.070000
+user time:  0.040000
  sys time:  0.030000
+
+  create_and_remove_blocks
+real time:  0.090000
+user time:  0.050000
+ sys time:  0.040000
 
 
 
@@ -868,7 +868,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.000000
+real time:  0.010000
 user time:  0.000000
  sys time:  0.000000
 
@@ -880,7 +880,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.000000
+real time:  0.010000
 user time:  0.000000
  sys time:  0.000000
 
@@ -914,7 +914,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.000000
+real time:  0.010000
 user time:  0.000000
  sys time:  0.000000
 
@@ -938,9 +938,9 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.020000
+real time:  0.030000
 user time:  0.020000
- sys time:  0.000000
+ sys time:  0.010000
 
   delete_block
 real time:  0.000000
@@ -960,7 +960,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.010000
+real time:  0.000000
 user time:  0.000000
  sys time:  0.000000
 
@@ -972,8 +972,8 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.010000
-user time:  0.000000
+real time:  0.020000
+user time:  0.010000
  sys time:  0.000000
 
 	===long files (2000 rows) big merges (100 merges) and big block remove and create===
@@ -1012,16 +1012,16 @@ user time:  0.000000
 
   create_and_remove_blocks
 real time:  0.040000
-user time:  0.030000
- sys time:  0.000000
+user time:  0.020000
+ sys time:  0.010000
 
   create_and_remove_blocks
-real time:  0.060000
+real time:  0.070000
 user time:  0.040000
- sys time:  0.020000
+ sys time:  0.030000
 
   create_and_remove_blocks
-real time:  0.100000
+real time:  0.090000
 user time:  0.060000
  sys time:  0.030000
 
@@ -1039,7 +1039,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.000000
+real time:  0.010000
 user time:  0.000000
  sys time:  0.000000
 
@@ -1051,7 +1051,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.010000
+real time:  0.000000
 user time:  0.000000
  sys time:  0.000000
 
@@ -1109,9 +1109,9 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.040000
-user time:  0.010000
- sys time:  0.020000
+real time:  0.030000
+user time:  0.020000
+ sys time:  0.000000
 
   delete_block
 real time:  0.000000
@@ -1131,7 +1131,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.010000
+real time:  0.000000
 user time:  0.000000
  sys time:  0.000000
 
@@ -1143,9 +1143,9 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.010000
-user time:  0.010000
- sys time:  0.000000
+real time:  0.020000
+user time:  0.000000
+ sys time:  0.010000
 
 	===long files (2000 rows) big merges (100 merges) and big block remove and create===
 
@@ -1156,8 +1156,8 @@ user time:  0.000000
 
   merge_file_sequence
 real time:  0.080000
-user time:  0.040000
- sys time:  0.030000
+user time:  0.060000
+ sys time:  0.010000
 
   delete_block
 real time:  0.000000
@@ -1182,14 +1182,14 @@ user time:  0.000000
  sys time:  0.000000
 
   create_and_remove_blocks
-real time:  0.030000
-user time:  0.000000
- sys time:  0.020000
+real time:  0.040000
+user time:  0.010000
+ sys time:  0.010000
 
   create_and_remove_blocks
 real time:  0.060000
-user time:  0.050000
- sys time:  0.010000
+user time:  0.040000
+ sys time:  0.030000
 
   create_and_remove_blocks
 real time:  0.100000
@@ -1282,7 +1282,7 @@ user time:  0.000000
   merge_file_sequence
 real time:  0.030000
 user time:  0.020000
- sys time:  0.000000
+ sys time:  0.010000
 
   delete_block
 real time:  0.000000
@@ -1302,7 +1302,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.000000
+real time:  0.010000
 user time:  0.000000
  sys time:  0.000000
 
@@ -1326,7 +1326,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.080000
+real time:  0.070000
 user time:  0.050000
  sys time:  0.020000
 
@@ -1353,19 +1353,19 @@ user time:  0.000000
  sys time:  0.000000
 
   create_and_remove_blocks
-real time:  0.040000
-user time:  0.020000
+real time:  0.030000
+user time:  0.010000
  sys time:  0.010000
 
   create_and_remove_blocks
-real time:  0.060000
-user time:  0.030000
- sys time:  0.030000
+real time:  0.070000
+user time:  0.040000
+ sys time:  0.040000
 
   create_and_remove_blocks
 real time:  0.100000
-user time:  0.060000
- sys time:  0.040000
+user time:  0.040000
+ sys time:  0.050000
 
 
 
@@ -1393,7 +1393,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.010000
+real time:  0.000000
 user time:  0.000000
  sys time:  0.000000
 
@@ -1427,7 +1427,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.000000
+real time:  0.010000
 user time:  0.000000
  sys time:  0.000000
 
@@ -1452,8 +1452,8 @@ user time:  0.000000
 
   merge_file_sequence
 real time:  0.030000
-user time:  0.010000
- sys time:  0.010000
+user time:  0.020000
+ sys time:  0.000000
 
   delete_block
 real time:  0.000000
@@ -1486,7 +1486,7 @@ user time:  0.000000
 
   merge_file_sequence
 real time:  0.020000
-user time:  0.010000
+user time:  0.020000
  sys time:  0.000000
 
 	===long files (2000 rows) big merges (100 merges) and big block remove and create===
@@ -1497,9 +1497,9 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.070000
-user time:  0.050000
- sys time:  0.010000
+real time:  0.090000
+user time:  0.040000
+ sys time:  0.030000
 
   delete_block
 real time:  0.000000
@@ -1519,21 +1519,21 @@ user time:  0.000000
  sys time:  0.000000
 
   write_files_to_tmp
-real time:  0.000000
+real time:  0.010000
 user time:  0.000000
  sys time:  0.000000
 
   create_and_remove_blocks
-real time:  0.030000
+real time:  0.040000
 user time:  0.010000
- sys time:  0.010000
+ sys time:  0.020000
 
   create_and_remove_blocks
 real time:  0.070000
-user time:  0.040000
- sys time:  0.030000
+user time:  0.050000
+ sys time:  0.010000
 
   create_and_remove_blocks
 real time:  0.090000
-user time:  0.060000
- sys time:  0.040000
+user time:  0.040000
+ sys time:  0.060000

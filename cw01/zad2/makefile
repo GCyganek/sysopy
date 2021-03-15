@@ -120,6 +120,7 @@ test_create_and_remove_blocks:
 	./test create_table 300 write_files_to_tmp long1.txt long2.txt create_and_remove_blocks 100 create_and_remove_blocks 200 create_and_remove_blocks 300
 
 tests_for_report:
+	rm -f raport2.txt
 	echo "\n	===short files (4 rows) small merges (5 merges)===" >> raport2.txt
 	make -s test_short_files_small_merges >> raport2.txt
 	echo "\n	===short files (4 rows) small merges (5 merges)==="
@@ -160,3 +161,6 @@ tests_for_report:
 	make -s test_create_and_remove_blocks >> raport2.txt
 	echo "\n	===creating and deleting 100, 200 and 300 blocks from tmp file merged from long files (2000 rows)==="
 	make -s test_create_and_remove_blocks
+
+create_report:
+	make -s tests_for_report

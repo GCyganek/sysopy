@@ -2,7 +2,7 @@
 // Created by gcyganek on 09.03.2021.
 //
 
-#include "library.h"
+#include "../zad2/library.h"
 
 const char* TMP_FILE = "tmp";
 int tmp_file_size = -1;
@@ -54,12 +54,31 @@ void write_files_to_tmp(char* file1, char* file2) {
     while ((getline(&line1, &line_size, f1) != -1) && (getline(&line2, &line_size, f2) != -1)) {
         if (feof(f1)) {
             fprintf(tmp_file, "%s\n", line1);
+            fprintf(tmp_file, "%s", line2);
+        } else if (feof(f2)) {
+            fprintf(tmp_file, "%s", line1);
             fprintf(tmp_file, "%s\n", line2);
         } else {
             fprintf(tmp_file, "%s", line1);
             fprintf(tmp_file, "%s", line2);
         }
         rows_count += 2;
+    }
+    while(getline(&line1, &line_size, f1) != -1) {
+        if (feof(f1)) {
+            fprintf(tmp_file, "%s\n", line1);
+        } else {
+            fprintf(tmp_file, "%s", line1);
+        }
+        rows_count += 1;
+    }
+    while(getline(&line2, &line_size, f2) != -1) {
+        if (feof(f2)) {
+            fprintf(tmp_file, "%s\n", line2);
+        } else {
+            fprintf(tmp_file, "%s", line2);
+        }
+        rows_count += 1;
     }
 
     fclose(f1);

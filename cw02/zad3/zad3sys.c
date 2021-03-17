@@ -17,23 +17,23 @@ double time_in_seconds(clock_t start, clock_t end) {
     return (double)(end - start) / sysconf(_SC_CLK_TCK);
 }
 
-int get_char_function(FILE* file, off_t* offset) {
+int get_char_function(int file_descriptor, off_t* offset) {
     char c;
     int value;
-    if((value = fread(&c, sizeof(char), 1, file)) == 1) {
-        *offset += value;
-        return (unsigned char)c;
+    if((value = read(file_descriptor, &c, 1)) == -1) {
+        fprintf(stderr, "Error while reading file: %s\n", strerror(errno));
+        exit(1);
     } else if(value == 0) {
         return EOF;
     } else {
-        fprintf(stderr, "Error while reading file: %s\n", strerror(errno));
-        exit(1);
+        *offset += value;
+        return (unsigned char)c;
     }
 }
 
-char* readline(off_t* offset, FILE* file) {
-    int offset_position = fseek(file, *offset, 0);
-    if(offset_position != 0) {
+char* readline(off_t* offset, int file_descriptor) {
+    ssize_t offset_position = lseek(file_descriptor, *offset, SEEK_SET);
+    if(offset_position == -1) {
         fprintf(stderr, "Error while reading file offset position: %s\n", strerror(errno));
         return NULL;
     }
@@ -44,7 +44,7 @@ char* readline(off_t* offset, FILE* file) {
     size_t length = 0;
     size_t max_length = 8;
 
-    while((c = get_char_function(file, offset)) != EOF && c != '\n') {
+    while((c = get_char_function(file_descriptor, offset)) != EOF && c != '\n') {
         if(length + 2 >= max_length) {
             size_t new_length = max_length * 2;
             char *new_buffer = realloc(buffer, new_length);
@@ -73,23 +73,23 @@ int main(int argc, char** argv) {
 
     clock_start_time = times(start_time);
 
-    FILE* data_file = fopen("data.txt", "r");
-    if(data_file == NULL) {
+    int data_file = open("data.txt", O_RDONLY);
+    if(data_file == -1) {
         fprintf(stderr, "Error while opening file data.txt: %s\n", strerror(errno));
         return 1;
     }
-    FILE* file_a = fopen("asys.txt", "w");
-    if(file_a == NULL) {
+    int file_a = open("a.txt", O_WRONLY|O_CREAT, S_IRUSR | S_IWUSR);
+    if(file_a == -1) {
         fprintf(stderr, "Error while opening file a.txt: %s\n", strerror(errno));
         return 1;
     }
-    FILE* file_b = fopen("bsys.txt", "w");
-    if(file_b == NULL) {
+    int file_b = open("b.txt", O_WRONLY|O_CREAT, S_IRUSR | S_IWUSR);
+    if(file_b == -1) {
         fprintf(stderr, "Error while opening file b.txt: %s\n", strerror(errno));
         return 1;
     }
-    FILE* file_c = fopen("csys.txt", "w");
-    if(file_c == NULL) {
+    int file_c = open("c.txt", O_WRONLY|O_CREAT, S_IRUSR | S_IWUSR);
+    if(file_c == -1) {
         fprintf(stderr, "Error while opening file c.txt: %s\n", strerror(errno));
         return 1;
     }
@@ -107,7 +107,7 @@ int main(int argc, char** argv) {
 
             if(sqr_int == sqr) {
                 strcat(buffer, "\n");
-                fwrite(buffer, sizeof(char), strlen(buffer), file_c);
+                write(file_c, buffer, strlen(buffer));
             }
         }
 
@@ -123,25 +123,20 @@ int main(int argc, char** argv) {
             char second_digit = buffer[strlen(buffer) - 2];
             if(second_digit == '0' || second_digit == '7') {
                 strcat(buffer, "\n");
-                fwrite(buffer, sizeof(char), strlen(buffer), file_b);
+                write(file_b, buffer, strlen(buffer));
             }
         }
     }
 
     char result_for_file_a[100];
     sprintf(result_for_file_a, "Liczb parzystych jest %d", even_numbers);
-    fwrite(result_for_file_a, sizeof(char), strlen(result_for_file_a), file_a);
-
-    fclose(data_file);
-    fclose(file_a);
-    fclose(file_b);
-    fclose(file_c);
+    write(file_a, result_for_file_a, strlen(result_for_file_a));
 
     clock_end_time = times(end_time);
 
     FILE* report = fopen("pomiar_zad_3.txt", "a");
 
-    fprintf(report, "\n ZAD3 FUNKCJE BIBLIOTEKI STANDARDOWEJ \n");
+    fprintf(report, "\n ZAD3 FUNKCJE SYSTEMOWE \n");
     fprintf(report, "real time:  %lf\n", time_in_seconds(clock_start_time, clock_end_time));
     fprintf(report, "user time:  %lf\n", time_in_seconds(start_time->tms_utime, end_time->tms_utime));
     fprintf(report, " sys time:  %lf\n", time_in_seconds(start_time->tms_stime, end_time->tms_stime));

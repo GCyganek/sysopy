@@ -5,9 +5,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <fcntl.h>
 #include <errno.h>
-#include <sys/times.h>
+#include <sys/stat.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <sys/times.h>
 
 double time_in_seconds(clock_t start, clock_t end) {
@@ -16,15 +18,17 @@ double time_in_seconds(clock_t start, clock_t end) {
 
 #define MAX_ROW_LENGTH 256
 
-size_t readline(char* buffer, long int *offset, FILE* file) {
-    long int index = fseek(file, *offset, 0);
-    if(index == -1) {
+size_t readline(char* buffer, long int *offset, int file) {
+    ssize_t index = lseek(file, *offset, SEEK_SET);
+    if(index < 0) {
         fprintf(stderr, "Error while reading file offset position: %s\n", strerror(errno));
         return -1;
     }
 
-    index = fread(buffer, sizeof(char), MAX_ROW_LENGTH, file);
-    if(index == 0) {
+    index = read(file, buffer, MAX_ROW_LENGTH);
+    if(index == -1) {
+        fprintf(stderr, "Error while reading data from file: %s\n", strerror(errno));
+    } else if (index == 0) {
         return -1;
     }
     buffer[index] = '\0';
@@ -81,8 +85,8 @@ int main(int argc, char** argv) {
     }
 
     char* file_name = argv[2];
-    FILE* file = fopen(file_name, "r");
-    if(file == NULL) {
+    int file = open(file_name, O_RDONLY);
+    if(file == -1) {
         fprintf(stderr, "Error while opening file %s: %s\n", file_name, strerror(errno));
     }
 
@@ -91,17 +95,16 @@ int main(int argc, char** argv) {
     long int offset = 0;
     while((result = readline(row, &offset, file)) != -1) {
         strtok(row, "\n");
-        if (check_char_in_row(row, c) == 1) {
+        if(check_char_in_row(row, c) == 1) {
             printf("%s\n", row);
         }
     }
-    fclose(file);
 
     clock_end_time = times(end_time);
 
     FILE* report = fopen("pomiar_zad_2.txt", "a");
 
-    fprintf(report, "\n ZAD2 FUNKCJE BIBLIOTEKI STANDARDOWEJ \n");
+    fprintf(report, "\n ZAD2 FUNKCJE SYSTEMOWE \n");
     fprintf(report, "real time:  %lf\n", time_in_seconds(clock_start_time, clock_end_time));
     fprintf(report, "user time:  %lf\n", time_in_seconds(start_time->tms_utime, end_time->tms_utime));
     fprintf(report, " sys time:  %lf\n", time_in_seconds(start_time->tms_stime, end_time->tms_stime));

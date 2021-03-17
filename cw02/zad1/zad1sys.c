@@ -1,5 +1,5 @@
 //
-// Created by gcyganek on 17.03.2021.
+// Created by gcyganek on 15.03.2021.
 //
 
 #include <stdlib.h>
@@ -11,25 +11,25 @@
 #include <sys/times.h>
 
 double time_in_seconds(clock_t start, clock_t end) {
-    return (double)(end - start) / sysconf(_SC_CLK_TCK);
+    return (double) (end - start) / sysconf(_SC_CLK_TCK);
 }
 
-int get_char_function(FILE* file, off_t* offset) {
+int get_char_function(int file_descriptor, off_t* offset) {
     char c;
     int value;
-    if((value = fread(&c, sizeof(char), 1, file)) == 1) {
-        *offset += value;
-        return (unsigned char)c;
+    if((value = read(file_descriptor, &c, 1)) == -1) {
+        fprintf(stderr, "Error while reading file: %s\n", strerror(errno));
+        exit(1);
     } else if(value == 0) {
         return EOF;
     } else {
-        fprintf(stderr, "Error while reading file: %s\n", strerror(errno));
-        exit(1);
+        *offset += value;
+        return (unsigned char)c;
     }
 }
 
-char* readline(off_t* offset, FILE* file) {
-    ssize_t offset_position = fseek(file, *offset, 0);
+char* readline(off_t* offset, int file_descriptor) {
+    ssize_t offset_position = lseek(file_descriptor, *offset, SEEK_SET);
     if(offset_position == -1) {
         fprintf(stderr, "Error while reading file offset position: %s\n", strerror(errno));
         return NULL;
@@ -41,7 +41,7 @@ char* readline(off_t* offset, FILE* file) {
     size_t length = 0;
     size_t max_length = 8;
 
-    while((c = get_char_function(file, offset)) != EOF && c != '\n') {
+    while((c = get_char_function(file_descriptor, offset)) != EOF && c != '\n') {
         if(length + 2 >= max_length) {
             size_t new_length = max_length * 2;
             char *new_buffer = realloc(buffer, new_length);
@@ -88,16 +88,15 @@ int main(int argc, char* argv[]) {
         strcpy(file_name2, argv[2]);
     }
 
+    int open_file1;
+    int open_file2;
 
-    FILE* file_1;
-    file_1 = fopen(file_name1, "r");
-    if(file_1 == NULL) {
+    open_file1 = open(file_name1, O_RDONLY);
+    if(open_file1 == -1) {
         fprintf(stderr, "Error while opening file %s: %s\n", file_name1, strerror(errno));
     }
-
-    FILE* file_2;
-    file_2 = fopen(file_name2, "r");
-    if(file_2 == NULL) {
+    open_file2 = open(file_name2, O_RDONLY);
+    if(open_file2 == -1) {
         fprintf(stderr, "Error while opening file %s: %s\n", file_name2, strerror(errno));
     }
 
@@ -107,31 +106,29 @@ int main(int argc, char* argv[]) {
     off_t offset_position1 = 0;
     off_t offset_position2 = 0;
 
-    while((buff1 = readline(&offset_position1, file_1)) != NULL &&
-          (buff2 = readline(&offset_position2, file_2)) != NULL){
+    while((buff1 = readline(&offset_position1, open_file1)) != NULL &&
+          (buff2 = readline(&offset_position2, open_file2)) != NULL){
         printf("%s\n", buff1);
         printf("%s\n", buff2);
         free(buff1);
         free(buff2);
     }
-    while((buff1 = readline(&offset_position1, file_1)) != NULL) {
+    while((buff1 = readline(&offset_position1, open_file1)) != NULL) {
         printf("%s\n", buff1);
         free(buff1);
     }
-    while((buff2 = readline(&offset_position2, file_2)) != NULL) {
+    while((buff2 = readline(&offset_position2, open_file2)) != NULL) {
         printf("%s\n", buff2);
         free(buff2);
     }
     free(buff1);
     free(buff2);
-    fclose(file_1);
-    fclose(file_2);
 
     clock_end_time = times(end_time);
 
     FILE* report = fopen("pomiar_zad_1.txt", "a");
 
-    fprintf(report, "\n ZAD1 FUNKCJE BIBLIOTEKI STANDARDOWEJ \n");
+    fprintf(report, "\n ZAD1 FUNKCJE SYSTEMOOWE \n");
     fprintf(report, "real time:  %lf\n", time_in_seconds(clock_start_time, clock_end_time));
     fprintf(report, "user time:  %lf\n", time_in_seconds(start_time->tms_utime, end_time->tms_utime));
     fprintf(report, " sys time:  %lf\n", time_in_seconds(start_time->tms_stime, end_time->tms_stime));

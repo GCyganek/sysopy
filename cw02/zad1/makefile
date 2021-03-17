@@ -10,4 +10,4 @@ test:
 	./zad1 txt1.txt txt2.txt
 
 clean:
-	rm -f .o zad1
+	rm -f zad1

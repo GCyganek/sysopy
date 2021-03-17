@@ -23,7 +23,7 @@ int get_char_function(int file_descriptor, off_t* offset) {
     }
 }
 
-char* readline2(size_t line_size, off_t* offset, int file_descriptor) {
+char* readline(off_t* offset, int file_descriptor) {
     ssize_t offset_position = lseek(file_descriptor, *offset, SEEK_SET);
     if(offset_position == -1) {
         fprintf(stderr, "Error while reading file offset position: %s\n", strerror(errno));
@@ -55,14 +55,11 @@ char* readline2(size_t line_size, off_t* offset, int file_descriptor) {
 
     buffer[length] = '\0';
     return buffer;
-
 }
 
 int main(int argc, char* argv[]) {
-    size_t buff_size = 128;
-
-    char file_name1[buff_size];
-    char file_name2[buff_size];
+    char file_name1[128];
+    char file_name2[128];
 
     if(argc !=  3) {
         printf("Did not receive any file names. Please type in two file names.\n");
@@ -97,18 +94,18 @@ int main(int argc, char* argv[]) {
     off_t offset_position1 = 0;
     off_t offset_position2 = 0;
 
-    while((buff1 = readline2(buff_size, &offset_position1, open_file1)) != NULL &&
-          (buff2 = readline2(buff_size, &offset_position2, open_file2)) != NULL){
+    while((buff1 = readline(&offset_position1, open_file1)) != NULL &&
+          (buff2 = readline(&offset_position2, open_file2)) != NULL){
         printf("%s\n", buff1);
         printf("%s\n", buff2);
         free(buff1);
         free(buff2);
     }
-    while((buff1 = readline2(buff_size, &offset_position1, open_file1)) != NULL) {
+    while((buff1 = readline(&offset_position1, open_file1)) != NULL) {
         printf("%s\n", buff1);
         free(buff1);
     }
-    while((buff2 = readline2(buff_size, &offset_position2, open_file2)) != NULL) {
+    while((buff2 = readline(&offset_position2, open_file2)) != NULL) {
         printf("%s\n", buff2);
         free(buff2);
     }

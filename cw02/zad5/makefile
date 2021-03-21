@@ -18,4 +18,4 @@ test:
 	./zad5sys txt.txt resultsys.txt
 
 clean:
-	rm -f zad5 zad5sys
+	rm -f zad5 zad5sys result.txt resultsys.txt

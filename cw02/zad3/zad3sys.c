@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
 
     clock_start_time = times(start_time);
 
-    int data_file = open("data.txt", O_RDONLY);
+    int data_file = open("dane.txt", O_RDONLY);
     if(data_file == -1) {
         fprintf(stderr, "Error while opening file data.txt: %s\n", strerror(errno));
         return 1;

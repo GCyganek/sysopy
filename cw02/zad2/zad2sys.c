@@ -90,10 +90,9 @@ int main(int argc, char** argv) {
         fprintf(stderr, "Error while opening file %s: %s\n", file_name, strerror(errno));
     }
 
-    int result;
     char row[MAX_ROW_LENGTH];
     long int offset = 0;
-    while((result = readline(row, &offset, file)) != -1) {
+    while(readline(row, &offset, file) != -1) {
         strtok(row, "\n");
         if(check_char_in_row(row, c) == 1) {
             printf("%s\n", row);

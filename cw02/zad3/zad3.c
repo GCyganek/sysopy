@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
 
     clock_start_time = times(start_time);
 
-    FILE* data_file = fopen("data.txt", "r");
+    FILE* data_file = fopen("dane.txt", "r");
     if(data_file == NULL) {
         fprintf(stderr, "Error while opening file data.txt: %s\n", strerror(errno));
         return 1;
@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
     while((buffer = readline(&offset_position, data_file)) != NULL) {
         long number = strtol(buffer, NULL, 10);
         if(number == 0 && *buffer != '0') {
-            fprintf(stderr, "Error while converting string to long: %s\n", strerror(errno));
+            fprintf(stderr, "Error while converting string %s to long: %s\n", buffer, strerror(errno));
         } else {
             double sqr = sqrt((double) number);
             long int sqr_int = (long int) sqr;

@@ -68,8 +68,6 @@ int main(int argc, char* argv[]) {
     clock_t clock_start_time;
     clock_t clock_end_time;
 
-    clock_start_time = times(start_time);
-
     char file_name1[128];
     char file_name2[128];
 
@@ -87,6 +85,8 @@ int main(int argc, char* argv[]) {
         strcpy(file_name1, argv[1]);
         strcpy(file_name2, argv[2]);
     }
+
+    clock_start_time = times(start_time);
 
     int open_file1;
     int open_file2;

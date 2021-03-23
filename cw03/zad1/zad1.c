@@ -16,6 +16,10 @@ int main(int argc, char** argv) {
 
     pid_t child_pid;
     long child_process_num = strtol(argv[1], NULL, 10);
+    if(child_process_num < 1) {
+        fprintf(stderr, "Wrong argument value, number of child processes should be more than 0, %ld given\n", child_process_num);
+        return 1;
+    }
 
     while(child_process_num--) {
         child_pid = fork();

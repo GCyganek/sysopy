@@ -1,0 +1,13 @@
+Porownanie na podstawie zawartych w tym katalogu plikow raport.txt (pomiar dla biblioteki z child processes) oraz
+raport2.txt dla biblioteki z zestawu 1.
+
+Zauwazalny jest spadek czasu wykonania mergowania dla podanych plikow
+Najbardziej jest to widoczne w ostatnim przypadku dla mergowania duzych plikow
+zawierajacych po 50000 wierszow mergowanych 100 razy.
+Dla biblioteki z zestawu 1 (nieco poprawionej, zeby kazda mergowana para plikow miala swoj plik tymczasowy)
+mamy real time: 11.26 s, gdzie dla zmodyfikowanej biblioteki z procesami potomnymi otrzymujemy tylko
+1.51 s. Roznice w lacznej sumie czasow user time i sys time procesow potomnych nie roznia sie juz az tak znaczaco
+wzgledem czasow sys time i user time rozwiazania z zestawu 2, ale sa nadal nizsze (odpowiednio o 1.11s i 0.57s), jednak
+dla pozostalych pomiarow bywaja one nieraz wieksze, choc nigdy nie sa znaczace.
+Mozna wywnioskowac, ze korzystajac z rozwiazania z procesami potomnymi otrzymujemy o wiele wieksza
+oszesdnosc czasu wykonania, utrzymujac porownywalny user time i sys time.

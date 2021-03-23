@@ -12,10 +12,18 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+static char extensions[7][5] = {
+        ".txt", ".h", ".c", ".json", ".java", ".py", ".cpp"
+};
+
 char* create_path(char* path1, char* path2) {
     char* path = malloc(sizeof(char) * (strlen(path1) + strlen(path2) + 2));
     sprintf(path, "%s/%s", path1, path2);
     return path;
+}
+
+char check_file_extension(char* file) {
+
 }
 
 void scan_directory(char* path, int depth, int max_depth, char* substring) {
@@ -28,12 +36,23 @@ void scan_directory(char* path, int depth, int max_depth, char* substring) {
 
     struct dirent* ent;
     struct stat file_stat;
+    size_t size = 256;
+    char* scan_result = malloc(size * sizeof(char));
+    if(scan_result == NULL) {
+        fprintf(stderr, "Error while allocating memory to %s: %s\n", scan_result, strerror(errno));
+        closedir(dir);
+        exit(1);
+    }
+
+    int len = 0;
+
     while((ent = readdir(dir)) != NULL) {
         char* file_path = create_path(path, ent->d_name);
 
         if(lstat(create_path(path, ent->d_name), &file_stat) == -1) {
             fprintf(stderr, "Error while using lstat with %s file: %s", ent->d_name, strerror(errno));
             free(file_path);
+            closedir(dir);
             exit(1);
         }
 
@@ -47,27 +66,27 @@ void scan_directory(char* path, int depth, int max_depth, char* substring) {
             }
         }
 
-        free(file_path);
-    }
-
-    printf("\ndirectory:%s      pid:%d\n", path, getpid());
-    rewinddir(dir);
-    while((ent = readdir(dir)) != NULL) {
-        char* file_path = create_path(path, ent->d_name);
-
-        if(lstat(create_path(path, ent->d_name), &file_stat) == -1) {
-            fprintf(stderr, "Error while using lstat with %s file: %s", ent->d_name, strerror(errno));
-            free(file_path);
-            exit(1);
-        }
-
         if(S_ISREG(file_stat.st_mode)) {  // check if text file
             if(strstr(ent->d_name, substring)) {
                 int file_name_length = strlen(ent->d_name);
                 if(file_name_length > 4) {
                     const char *last_four = &ent->d_name[file_name_length - 4];
                     if(!strcmp(last_four, ".txt")) {
-                        printf("%s\n", ent->d_name);
+                        while(len + strlen(file_path) > size) {
+                            size *= 2;
+                            if(realloc(scan_result, size) == NULL) {
+                                fprintf(stderr, "Error while allocating memory: %s\n", strerror(errno));
+                                closedir(dir);
+                                exit(1);
+                            }
+                        }
+                        if(snprintf(scan_result + len, strlen(ent->d_name) + 2, "%s\n", ent->d_name) < 0) {
+                            fprintf(stderr, "Error while writing to char array: %s", strerror(errno));
+                            closedir(dir);
+                            free(file_path);
+                            exit(1);
+                        }
+                        len += strlen(scan_result);
                     }
                 }
             }
@@ -81,6 +100,10 @@ void scan_directory(char* path, int depth, int max_depth, char* substring) {
     while (waitpid(-1, NULL, 0) != -1) {
     }
 
+    printf("directory:%s    pid:%d\n", path, getpid());
+    printf("%s\n", scan_result);
+
+    free(scan_result);
     exit(0);
 }
 
@@ -100,7 +123,6 @@ int main(int argc, char** argv) {
     child_pid = fork();
     if(child_pid == 0){
         scan_directory(argv[1], 0, max_depth, argv[2]);
-        exit(0);
     }
 
     while (waitpid(-1, NULL, 0) != -1) {

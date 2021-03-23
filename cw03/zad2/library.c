@@ -32,7 +32,11 @@ Block* create_block(int size) {
 
 void write_files_to_tmp(char* file1, char* file2, char* tmp) {
     int rows_count = 0;
+
     FILE *tmp_file = fopen(tmp, "w");
+    if(tmp_file == NULL) {
+        printf("\nError while loading file %s in operation write_files_to_tmp\n", tmp);
+    }
     FILE *f1 = fopen(file1, "r");
     if(f1 == NULL) {
         fclose(tmp_file);
@@ -111,23 +115,17 @@ int create_block_from_tmp(Table* table, char* tmp) {
     fclose(tmp_file);
 
     int table_index;
-    if(merge_file_sequence_index == -1) {
-        int size = table->size;
-        int i = 0;
-        while((i < size) && (table->blocks[i] != NULL)) {
-            i++;
-        }
-        if(i >= size) {
-            printf("\nError in create_block_from_tmp operation: index out of table range\n");
-            return -1;
-        } else {
-            table->blocks[i] = block;
-            table_index = i;
-        }
+    int size = table->size;
+    int i = 0;
+    while((i < size) && (table->blocks[i] != NULL)) {
+        i++;
+    }
+    if(i >= size) {
+        printf("\nError in create_block_from_tmp operation: index out of table range\n");
+        return -1;
     } else {
-        table_index = merge_file_sequence_index;
-        table->blocks[table_index] = block;
-        merge_file_sequence_index = -1;
+        table->blocks[i] = block;
+        table_index = i;
     }
 
     return table_index;
@@ -146,17 +144,23 @@ void merge_file_sequence(Table* table, char** file_sequence) {
         file1 = strtok(file_sequence[i], ":");
         file2 = strtok(NULL, "");
 
-        char* tmp = calloc(sizeof(char), strlen(file1) + strlen(file2) + 20);
-        sprintf(tmp, "%s%s%dtmp.txt", strtok(file1, "."), strtok(file2, "."), i);
+        pid_t child_pid;
+        child_pid = fork();
+        if(child_pid == 0) {
+            char* tmp = calloc(sizeof(char), strlen(file1) + strlen(file2) + 20);
+            sprintf(tmp, "%s%stmp.txt", strtok(file1, "."), strtok(file2, "."));
 
-        strcat(file1, ".txt");
-        strcat(file2, ".txt");
+            strcat(file1, ".txt");
+            strcat(file2, ".txt");
 
-        write_files_to_tmp(file1, file2, tmp);
+            write_files_to_tmp(file1, file2, tmp);
+            create_block_from_tmp(table, tmp);
 
-        merge_file_sequence_index = i;
-        create_block_from_tmp(table, tmp);
-        free(tmp);
+            exit(0);
+        }
+    }
+
+    while (waitpid(-1, NULL, 0) != -1) {
     }
 }
 

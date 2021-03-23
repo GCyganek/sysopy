@@ -31,7 +31,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.010000
+real time:  0.020000
 user time:  0.000000
  sys time:  0.000000
 
@@ -77,9 +77,9 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.030000
+real time:  0.040000
 user time:  0.010000
- sys time:  0.000000
+ sys time:  0.020000
 
   delete_block
 real time:  0.000000
@@ -111,7 +111,7 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.020000
+real time:  0.030000
 user time:  0.010000
  sys time:  0.000000
 
@@ -123,9 +123,9 @@ user time:  0.000000
  sys time:  0.000000
 
   merge_file_sequence
-real time:  0.070000
+real time:  0.090000
 user time:  0.040000
- sys time:  0.020000
+ sys time:  0.030000
 
   delete_block
 real time:  0.000000
@@ -150,16 +150,16 @@ user time:  0.000000
  sys time:  0.000000
 
   create_and_remove_blocks
-real time:  0.040000
-user time:  0.020000
+real time:  0.060000
+user time:  0.030000
  sys time:  0.010000
 
   create_and_remove_blocks
-real time:  0.070000
+real time:  0.120000
 user time:  0.050000
- sys time:  0.020000
+ sys time:  0.070000
 
   create_and_remove_blocks
-real time:  0.110000
-user time:  0.050000
+real time:  0.150000
+user time:  0.090000
  sys time:  0.060000

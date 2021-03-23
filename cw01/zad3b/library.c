@@ -2,7 +2,7 @@
 // Created by gcyganek on 09.03.2021.
 //
 
-#include "../zad2/library.h"
+#include "library.h"
 
 const char* TMP_FILE = "tmp";
 int tmp_file_size = -1;

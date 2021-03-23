@@ -4,7 +4,6 @@
 
 #include "library.h"
 
-const char* TMP_FILE = "tmp";
 int tmp_file_size = -1;
 int merge_file_sequence_index = -1;
 
@@ -27,13 +26,13 @@ Block* create_block(int size) {
     Block* block = calloc(sizeof(Block), 1);
     block->size = size;
     block->rows = calloc(sizeof(char*), size);
+    block->tmp = NULL;
     return block;
 }
 
-void write_files_to_tmp(char* file1, char* file2) {
+void write_files_to_tmp(char* file1, char* file2, char* tmp) {
     int rows_count = 0;
-
-    FILE *tmp_file = fopen(TMP_FILE, "w");
+    FILE *tmp_file = fopen(tmp, "w");
     FILE *f1 = fopen(file1, "r");
     if(f1 == NULL) {
         fclose(tmp_file);
@@ -88,8 +87,8 @@ void write_files_to_tmp(char* file1, char* file2) {
     tmp_file_size = rows_count;
 }
 
-int create_block_from_tmp(Table* table) {
-    FILE* tmp_file = fopen(TMP_FILE, "r");
+int create_block_from_tmp(Table* table, char* tmp) {
+    FILE* tmp_file = fopen(tmp, "r");
     if(tmp_file == NULL) {
         printf("\nError in create_block_from_tmp operation: tmp_file is invalid\n");
         return -1;
@@ -103,6 +102,7 @@ int create_block_from_tmp(Table* table) {
     size_t line_size = 0;
 
     Block* block = create_block(tmp_file_size);
+    block->tmp = tmp;
 
     while(getline(&block->rows[row_index], &line_size, tmp_file) != -1) {
         row_index += 1;
@@ -145,10 +145,18 @@ void merge_file_sequence(Table* table, char** file_sequence) {
     for(int i = 0; i < size; i++) {
         file1 = strtok(file_sequence[i], ":");
         file2 = strtok(NULL, "");
-        write_files_to_tmp(file1, file2);
+
+        char* tmp = calloc(sizeof(char), strlen(file1) + strlen(file2) + 20);
+        sprintf(tmp, "%s%s%dtmp.txt", strtok(file1, "."), strtok(file2, "."), i);
+
+        strcat(file1, ".txt");
+        strcat(file2, ".txt");
+
+        write_files_to_tmp(file1, file2, tmp);
 
         merge_file_sequence_index = i;
-        create_block_from_tmp(table);
+        create_block_from_tmp(table, tmp);
+        free(tmp);
     }
 }
 

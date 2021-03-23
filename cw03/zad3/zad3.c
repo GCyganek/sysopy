@@ -9,6 +9,8 @@
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 char* create_path(char* path1, char* path2) {
     char* path = malloc(sizeof(char) * (strlen(path1) + strlen(path2) + 2));
@@ -21,40 +23,65 @@ void scan_directory(char* path, int depth, int max_depth, char* substring) {
     DIR* dir = opendir(path);
     if(dir == NULL) {
         fprintf(stderr, "Error while opening directory %s: %s\n", path, strerror(errno));
-        return;
+        exit(1);
     }
 
     struct dirent* ent;
     struct stat file_stat;
     while((ent = readdir(dir)) != NULL) {
         char* file_path = create_path(path, ent->d_name);
+
         if(lstat(create_path(path, ent->d_name), &file_stat) == -1) {
             fprintf(stderr, "Error while using lstat with %s file: %s", ent->d_name, strerror(errno));
             free(file_path);
-            return;
+            exit(1);
         }
 
-        if(S_ISREG(file_stat.st_mode)) {
+        else if(S_ISDIR(file_stat.st_mode)) { // check if dir
+            if(!strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..")) continue;
+            pid_t child_pid;
+            child_pid = fork();
+            if(child_pid == 0) {
+                scan_directory(file_path, depth + 1, max_depth, substring);
+                exit(0);
+            }
+        }
+
+        free(file_path);
+    }
+
+    printf("\ndirectory:%s      pid:%d\n", path, getpid());
+    rewinddir(dir);
+    while((ent = readdir(dir)) != NULL) {
+        char* file_path = create_path(path, ent->d_name);
+
+        if(lstat(create_path(path, ent->d_name), &file_stat) == -1) {
+            fprintf(stderr, "Error while using lstat with %s file: %s", ent->d_name, strerror(errno));
+            free(file_path);
+            exit(1);
+        }
+
+        if(S_ISREG(file_stat.st_mode)) {  // check if text file
             if(strstr(ent->d_name, substring)) {
                 int file_name_length = strlen(ent->d_name);
                 if(file_name_length > 4) {
                     const char *last_four = &ent->d_name[file_name_length - 4];
                     if(!strcmp(last_four, ".txt")) {
-                       printf("%s\n", ent->d_name);
+                        printf("%s\n", ent->d_name);
                     }
                 }
             }
-        }
-        else if(S_ISDIR(file_stat.st_mode)) {
-            if(!strcmp(ent->d_name, ".")) continue;
-            if(!strcmp(ent->d_name, "..")) continue;
-            scan_directory(file_path, depth + 1, max_depth, substring);
         }
 
         free(file_path);
     }
 
     closedir(dir);
+
+    while (waitpid(-1, NULL, 0) != -1) {
+    }
+
+    exit(0);
 }
 
 int main(int argc, char** argv) {
@@ -69,7 +96,15 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    scan_directory(argv[1], 0, max_depth, argv[2]);
+    pid_t child_pid;
+    child_pid = fork();
+    if(child_pid == 0){
+        scan_directory(argv[1], 0, max_depth, argv[2]);
+        exit(0);
+    }
+
+    while (waitpid(-1, NULL, 0) != -1) {
+    }
 
     return 0;
 }

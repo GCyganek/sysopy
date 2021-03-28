@@ -29,6 +29,8 @@ int main(int argc, char** argv) {
 
     merge_file_sequence(table, file_sequence);
 
+    read_table(table);
+
     clock_end_time = times(end_time);
 
     printf("real time:  %lf\n", time_in_seconds(clock_start_time, clock_end_time));

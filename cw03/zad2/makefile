@@ -15,7 +15,7 @@ create_report:
 	make -s tests_for_report
 
 clean:
-	rm -f *.o *.a test *tmp.txt
+	rm -f *.o *.a test *tmp.txt tmp/*.txt
 
 test_short_files_small_merges:
 	./test  5 short1.txt:short2.txt short1.txt:short2.txt short1.txt:short2.txt short1.txt:short2.txt short1.txt:short2.txt

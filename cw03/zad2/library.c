@@ -147,14 +147,13 @@ void merge_file_sequence(Table* table, char** file_sequence) {
         pid_t child_pid;
         child_pid = fork();
         if(child_pid == 0) {
-            char* tmp = calloc(sizeof(char), strlen(file1) + strlen(file2) + 20);
-            sprintf(tmp, "%s%stmp.txt", strtok(file1, "."), strtok(file2, "."));
+            char* tmp = calloc(sizeof(char), strlen(file1) + strlen(file2) + 25);
+            sprintf(tmp, "tmp/%s%s%dtmp.txt", strtok(file1, "."), strtok(file2, "."), i);
 
             strcat(file1, ".txt");
             strcat(file2, ".txt");
 
             write_files_to_tmp(file1, file2, tmp);
-            create_block_from_tmp(table, tmp);
 
             free(tmp);
             exit(0);
@@ -255,6 +254,7 @@ void read_table(Table* table) {
     int tab_size = table->size;
     Block* block;
     int block_size;
+
 
     char* row;
     for(int i = 0; i < tab_size; i++) {

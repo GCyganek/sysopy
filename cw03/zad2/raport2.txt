@@ -1,0 +1,63 @@
+
+	===short files (4 rows) small merges (5 merges)===
+
+  merge_file_sequence
+real time:  0.000000
+user time:  0.000000
+ sys time:  0.000000
+
+	===short files (4 rows) medium merges (25 merges)===
+
+  merge_file_sequence
+real time:  0.010000
+user time:  0.000000
+ sys time:  0.000000
+
+	===short files (4 rows) big merges (100 merges)===
+
+  merge_file_sequence
+real time:  0.010000
+user time:  0.000000
+ sys time:  0.000000
+
+	===medium files (700 rows) small merges (5 merges)===
+
+  merge_file_sequence
+real time:  0.010000
+user time:  0.000000
+ sys time:  0.000000
+
+	===medium files (700 rows) medium merges (25 merges)===
+
+  merge_file_sequence
+real time:  0.010000
+user time:  0.000000
+ sys time:  0.000000
+
+	===medium files (700 rows) big merges (100 merges)===
+
+  merge_file_sequence
+real time:  0.010000
+user time:  0.000000
+ sys time:  0.000000
+
+	===long files (50000 rows) small merges (5 merges)===
+
+  merge_file_sequence
+real time:  0.030000
+user time:  0.020000
+ sys time:  0.000000
+
+	===long files (50000 rows) medium merges (25 merges)===
+
+  merge_file_sequence
+real time:  0.150000
+user time:  0.110000
+ sys time:  0.010000
+
+	===long files (50000 rows) big merges (100 merges)===
+
+  merge_file_sequence
+real time:  0.540000
+user time:  0.390000
+ sys time:  0.030000

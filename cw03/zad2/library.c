@@ -156,6 +156,7 @@ void merge_file_sequence(Table* table, char** file_sequence) {
             write_files_to_tmp(file1, file2, tmp);
             create_block_from_tmp(table, tmp);
 
+            free(tmp);
             exit(0);
         }
     }

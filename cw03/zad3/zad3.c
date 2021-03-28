@@ -12,8 +12,8 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-static char extensions[7][5] = {
-        ".txt", ".h", ".c", ".json", ".java", ".py", ".cpp"
+static const char extensions[][6] = {
+        ".txt", ".h", ".c", ".json", ".java", ".csv", ".cpp"
 };
 
 char* create_path(char* path1, char* path2) {
@@ -22,8 +22,30 @@ char* create_path(char* path1, char* path2) {
     return path;
 }
 
-char check_file_extension(char* file) {
+char check_file_extension(char* file, struct dirent* ent) {
+    int file_name_length = strlen(ent->d_name);
+    int extension_length;
+    for(size_t i = 0; i < sizeof(extensions) / sizeof(extensions[0]); i++) {
+        extension_length = strlen(extensions[i]);
+        if(file_name_length > extension_length) {
+            const char *end = &ent->d_name[file_name_length - extension_length];
+            if(!strcmp(end, extensions[i])) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
 
+char check_is_text_file_with_substr(char* file, struct dirent* ent, struct stat* file_stat, char* substring) {
+    if(S_ISREG(file_stat->st_mode)) {
+        if(strstr(ent->d_name, substring)) {
+            if(check_file_extension(file, ent)) {
+                return 1;
+            }
+        }
+    }
+    return 0;
 }
 
 void scan_directory(char* path, int depth, int max_depth, char* substring) {
@@ -36,15 +58,6 @@ void scan_directory(char* path, int depth, int max_depth, char* substring) {
 
     struct dirent* ent;
     struct stat file_stat;
-    size_t size = 256;
-    char* scan_result = malloc(size * sizeof(char));
-    if(scan_result == NULL) {
-        fprintf(stderr, "Error while allocating memory to %s: %s\n", scan_result, strerror(errno));
-        closedir(dir);
-        exit(1);
-    }
-
-    int len = 0;
 
     while((ent = readdir(dir)) != NULL) {
         char* file_path = create_path(path, ent->d_name);
@@ -56,7 +69,7 @@ void scan_directory(char* path, int depth, int max_depth, char* substring) {
             exit(1);
         }
 
-        else if(S_ISDIR(file_stat.st_mode)) { // check if dir
+        if((depth + 1 <= max_depth) && S_ISDIR(file_stat.st_mode)) { // check if dir
             if(!strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..")) continue;
             pid_t child_pid;
             child_pid = fork();
@@ -66,30 +79,8 @@ void scan_directory(char* path, int depth, int max_depth, char* substring) {
             }
         }
 
-        if(S_ISREG(file_stat.st_mode)) {  // check if text file
-            if(strstr(ent->d_name, substring)) {
-                int file_name_length = strlen(ent->d_name);
-                if(file_name_length > 4) {
-                    const char *last_four = &ent->d_name[file_name_length - 4];
-                    if(!strcmp(last_four, ".txt")) {
-                        while(len + strlen(file_path) > size) {
-                            size *= 2;
-                            if(realloc(scan_result, size) == NULL) {
-                                fprintf(stderr, "Error while allocating memory: %s\n", strerror(errno));
-                                closedir(dir);
-                                exit(1);
-                            }
-                        }
-                        if(snprintf(scan_result + len, strlen(ent->d_name) + 2, "%s\n", ent->d_name) < 0) {
-                            fprintf(stderr, "Error while writing to char array: %s", strerror(errno));
-                            closedir(dir);
-                            free(file_path);
-                            exit(1);
-                        }
-                        len += strlen(scan_result);
-                    }
-                }
-            }
+        if(check_is_text_file_with_substr(file_path, ent, &file_stat, substring)) {
+            printf("File containing the given substring found in directory:%s by process with pid:%d\t\t\t\t%s\n", path, getpid(), ent->d_name);
         }
 
         free(file_path);
@@ -100,10 +91,6 @@ void scan_directory(char* path, int depth, int max_depth, char* substring) {
     while (waitpid(-1, NULL, 0) != -1) {
     }
 
-    printf("directory:%s    pid:%d\n", path, getpid());
-    printf("%s\n", scan_result);
-
-    free(scan_result);
     exit(0);
 }
 

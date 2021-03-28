@@ -8,6 +8,6 @@ Dla biblioteki z zestawu 1 (nieco poprawionej, zeby kazda mergowana para plikow 
 mamy real time: 11.26 s, gdzie dla zmodyfikowanej biblioteki z procesami potomnymi otrzymujemy tylko
 1.51 s. Roznice w lacznej sumie czasow user time i sys time procesow potomnych nie roznia sie juz az tak znaczaco
 wzgledem czasow sys time i user time rozwiazania z zestawu 2, ale sa nadal nizsze (odpowiednio o 1.11s i 0.57s), jednak
-dla pozostalych pomiarow bywaja one nieraz wieksze, choc nigdy nie sa znaczace.
+dla pozostalych pomiarow bywaja one nieraz wieksze, choc te roznice nigdy nie sa znaczace.
 Mozna wywnioskowac, ze korzystajac z rozwiazania z procesami potomnymi otrzymujemy o wiele wieksza
 oszesdnosc czasu wykonania, utrzymujac porownywalny user time i sys time.

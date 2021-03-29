@@ -1,0 +1,45 @@
+fork:
+Handler, ignorowanie oraz maskowanie - dziedziczone przez potomka. Sygnal wywolany w rodzicu nie jest widoczny w
+procesie potomnym
+
+exec:
+Dziedziczone jest maskowanie i ignorowanie, a sygnal wywolany i oczekujacy w rodzicu jest widoczny rowniez po wywolaniu
+exec
+
+dzialanie programu dla wszystkich mozliwych opcji wywolan:
+
+./main handler fork
+Executing raise(SIGUSR1) in parent process
+SIGUSR1 received
+Executing raise(SIGUSR1) in child process
+SIGUSR1 received
+
+./main ignore fork
+Executing raise(SIGUSR1) in parent process
+Executing raise(SIGUSR1) in child process
+
+./main mask fork
+Executing raise(SIGUSR1) in parent process
+Pending SIGUSR1 signal in parent process
+Executing raise(SIGUSR1) in child process
+Pending SIGUSR1 signal in child process
+
+./main pending fork
+Executing raise(SIGUSR1) in parent process
+Pending SIGUSR1 signal in parent process
+No pending signal in child process
+
+./main ignore exec
+Executing raise(SIGUSR1) in parent process
+Executing raise(SIGUSR1) in child process
+
+./main mask exec
+Executing raise(SIGUSR1) in parent process
+Pending SIGUSR1 signal in parent process
+Executing raise(SIGUSR1) in child process
+Pending SIGUSR1 signal in child process
+
+./main pending exec
+Executing raise(SIGUSR1) in parent process
+Pending SIGUSR1 signal in parent process
+Pending SIGUSR1 signal in child process

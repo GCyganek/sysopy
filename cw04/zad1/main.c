@@ -4,6 +4,7 @@
 
 #include "header.h"
 #include <wait.h>
+#include <errno.h>
 
 void handler(int sig_no) {
     (void)sig_no;
@@ -64,7 +65,9 @@ int main(int argc, char** argv) {
         sigemptyset(&sigact.sa_mask);
         sigact.sa_handler = handler;
         sigact.sa_flags = 0;
-        sigaction(SIGUSR1, &sigact, NULL);
+        if(sigaction(SIGUSR1, &sigact, NULL) == -1) {
+            fprintf(stderr, "Error while using sigaction(): %s", strerror(errno));
+        }
     }
 
     else {

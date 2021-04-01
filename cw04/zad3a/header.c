@@ -60,6 +60,6 @@ enum p_mode assign_mode(char* mode) {
         return Sigrt;
     }
 
-    fprintf(stderr, "Wrong mode, you can only choose one from: ignore, handler, pending, mask\n");
+    fprintf(stderr, "Wrong mode, you can only choose one from: kill, sigqueue, sigrt\n");
     exit(1);
 }

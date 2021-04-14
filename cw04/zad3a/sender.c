@@ -14,11 +14,11 @@ void sig1_handler(int sig_no, siginfo_t* info, void* ucontext) {
     (void)sig_no;
     (void)info;
 
+    sig1_counter++;
+
     if(mode == Sigqueue) {
         printf("Received sig1 no %d from catcher\n", info -> si_value.sival_int);
     }
-
-    sig1_counter++;
 }
 
 void sig2_handler(int sig_no, siginfo_t* info, void* ucontext) {
@@ -28,7 +28,6 @@ void sig2_handler(int sig_no, siginfo_t* info, void* ucontext) {
 
     printf("Sender received %d signals, sent %d\n", sig1_counter, sig1_to_send);
     sig2_received = 1;
-    exit(0);
 }
 
 void send_signals_to_catcher(pid_t catcher_pid) {

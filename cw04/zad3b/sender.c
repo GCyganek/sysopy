@@ -14,7 +14,7 @@ pid_t catcher_pid;
 void send_signal_to_catcher() {
     sig1_sent++;
 
-    if (mode == Sigrt) {
+    if (mode == Sigqueue) {
         union sigval val;
         val.sival_int = sig1_sent;
         sigqueue(catcher_pid, SIGNAL1(mode), val);
@@ -26,7 +26,7 @@ void send_signal_to_catcher() {
 }
 
 void send_end_signal() {
-    if (mode == Sigrt) {
+    if (mode == Sigqueue) {
         union sigval val;
         val.sival_int = sig1_sent + 1;
         sigqueue(catcher_pid, SIGNAL2(mode), val);
@@ -42,6 +42,8 @@ void sig1_handler(int sig_no, siginfo_t* info, void* ucontext) {
     (void)sig_no;
     (void)info;
 
+    sig1_counter++;
+
     if (sig1_sent < sig1_to_send) {
         send_signal_to_catcher();
     }
@@ -53,8 +55,6 @@ void sig1_handler(int sig_no, siginfo_t* info, void* ucontext) {
     if (mode == Sigqueue) {
         printf("Received sig1 no %d from catcher\n", info -> si_value.sival_int);
     }
-
-    sig1_counter++;
 }
 
 void sig2_handler(int sig_no, siginfo_t* info, void* ucontext) {
@@ -64,7 +64,6 @@ void sig2_handler(int sig_no, siginfo_t* info, void* ucontext) {
 
     printf("Sender received %d signals, sent %d\n", sig1_counter, sig1_to_send);
     sig2_received = 1;
-    exit(0);
 }
 
 int main(int argc, char** argv) {

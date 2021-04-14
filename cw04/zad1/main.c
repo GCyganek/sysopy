@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
     enum p_mode mode = assign_mode(argv[1]);
     enum p_option option = assign_option(argv[2]);
 
-    // we can handle signal this way or the way shown in the next else if (it would be SIG_IGN in the place of handler)
+    // we can handle signal this way or the way shown in the next else if (it'd be SIG_IGN in the place of handler)
     if (mode == Ignore) {
         signal(SIGUSR1, SIG_IGN);
     }

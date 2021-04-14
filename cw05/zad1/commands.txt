@@ -1,0 +1,12 @@
+skladnik1 = cat /etc/passwd
+skladnik2 = ls | grep \.c
+skladnik3 = wc -l
+skladnik4 = ls -l | grep ma | grep \.txt
+skladnik5 = grep sys
+
+skladnik1 | skladnik3
+skladnik1 | skladnik5
+skladnik1 | skladnik5 | skladnik3
+skladnik2
+skladnik4
+skladnik4 | skladnik3

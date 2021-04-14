@@ -125,6 +125,8 @@ int main(int argc, char** argv) {
 
     wait(NULL);
 
+    printf("\tSA_NODEFER FLAG SCENARIO\n\n");
+
     signal(SIGCHLD, SIG_IGN);
 
     struct sigaction sigact_usr;
@@ -135,9 +137,10 @@ int main(int argc, char** argv) {
         fprintf(stderr, "Error while using sigaction(): %s", strerror(errno));
     }
 
-    printf("\tSA_NODEFER FLAG SCENARIO\n\n");
     printf("======RAISING SIGUSR1 IN SIGUSR1 HANDLER ONCE======\n");
     raise(SIGUSR1);
+
+    printf("\n\tSA_RESETHAND FLAG SCENARIO\n\n");
 
     struct sigaction sigact_chld2;
     sigact_chld2.sa_flags = SA_RESETHAND;
@@ -147,7 +150,6 @@ int main(int argc, char** argv) {
         fprintf(stderr, "Error while using sigaction(): %s", strerror(errno));
     }
 
-    printf("\n\tSA_RESETHAND FLAG SCENARIO\n\n");
     printf("======FORKING TWO CHILD PROCESSES, THE SECOND ONE WILL BE IGNORED======\n");
 
     if (fork() == 0) {

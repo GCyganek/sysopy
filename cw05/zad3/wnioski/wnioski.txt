@@ -1,0 +1,137 @@
+Wynik dzialania make test, gdzie sprawdzamy kolejno 1. 5 porducentow, 1 konsument 2. 5 producentow, 5 konsumentow
+3. 1 producenta, 5 konsumentow; dla N = 5, 10, 25; za kazdym razem wywoluje ./check, ktory sprawdza poprawnosc
+pliku result.txt do ktorego zapisuja wszyscy konsumenci, przykladowo ./check prod_1.txt result.txt 1 sprawdza, czy
+result.txt rzeczywiscie zawiera dane z prod_1.txt i zwraca "CHECKED prod_1.txt - CORRECT" jesli zawiera oraz
+"CHECKED prod_1.txt - WRONG" w przeciwnym wypadku
+
+=====DZIALANIE=make=test================================================================================================
+
+make -s N=5 test_5_prods_1_cons
+CHECKED prod_1.txt - CORRECT
+CHECKED prod_2.txt - CORRECT
+CHECKED prod_3.txt - CORRECT
+CHECKED prod_4.txt - CORRECT
+CHECKED prod_5.txt - CORRECT
+make -s show_result_and_delete
+12345678901234567890123456789012345678901234567890
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+cccccccccccccccccccccccccccccccccccccccccccccccccc
+dddddddddddddddddddddddddddddddddddddddddddddddddd
+eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+for ./main N 4 one_producer # 5 producers - 1 consumer
+
+make -s N=5 test_5_prods_5_cons
+CHECKED prod_1.txt - CORRECT
+CHECKED prod_2.txt - CORRECT
+CHECKED prod_3.txt - CORRECT
+CHECKED prod_4.txt - CORRECT
+CHECKED prod_5.txt - CORRECT
+make -s show_result_and_delete
+12345678901234567890123456789012345678901234567890
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+cccccccccccccccccccccccccccccccccccccccccccccccccc
+dddddddddddddddddddddddddddddddddddddddddddddddddd
+eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+for ./main N 4 one_producer # 5 producers - 5 consumers
+
+
+make -s N=5 test_1_prods_5_cons
+CHECKED prod_1.txt - CORRECT
+make -s show_result_and_delete
+12345678901234567890123456789012345678901234567890
+for ./main N 4 one_producer # 5 producers - 5 consumers
+
+
+make -s N=10 test_5_prods_1_cons
+CHECKED prod_1.txt - CORRECT
+CHECKED prod_2.txt - CORRECT
+CHECKED prod_3.txt - CORRECT
+CHECKED prod_4.txt - CORRECT
+CHECKED prod_5.txt - CORRECT
+make -s show_result_and_delete
+12345678901234567890123456789012345678901234567890
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+cccccccccccccccccccccccccccccccccccccccccccccccccc
+dddddddddddddddddddddddddddddddddddddddddddddddddd
+eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+for ./main N 4 one_producer # 5 producers - 1 consumer
+
+make -s N=10 test_5_prods_5_cons
+CHECKED prod_1.txt - CORRECT
+CHECKED prod_2.txt - CORRECT
+CHECKED prod_3.txt - CORRECT
+CHECKED prod_4.txt - CORRECT
+CHECKED prod_5.txt - CORRECT
+make -s show_result_and_delete
+12345678901234567890123456789012345678901234567890
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+cccccccccccccccccccccccccccccccccccccccccccccccccc
+dddddddddddddddddddddddddddddddddddddddddddddddddd
+eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+for ./main N 4 one_producer # 5 producers - 5 consumers
+
+
+make -s N=10 test_1_prods_5_cons
+CHECKED prod_1.txt - CORRECT
+make -s show_result_and_delete
+12345678901234567890123456789012345678901234567890
+for ./main N 4 one_producer # 5 producers - 5 consumers
+
+
+make -s N=25 test_5_prods_1_cons
+CHECKED prod_1.txt - CORRECT
+CHECKED prod_2.txt - CORRECT
+CHECKED prod_3.txt - CORRECT
+CHECKED prod_4.txt - CORRECT
+CHECKED prod_5.txt - CORRECT
+make -s show_result_and_delete
+12345678901234567890123456789012345678901234567890
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+cccccccccccccccccccccccccccccccccccccccccccccccccc
+dddddddddddddddddddddddddddddddddddddddddddddddddd
+eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+for ./main N 4 one_producer # 5 producers - 1 consumer
+
+make -s N=25 test_5_prods_5_cons
+CHECKED prod_1.txt - CORRECT
+CHECKED prod_2.txt - CORRECT
+CHECKED prod_3.txt - CORRECT
+CHECKED prod_4.txt - CORRECT
+CHECKED prod_5.txt - CORRECT
+make -s show_result_and_delete
+12345678901234567890123456789012345678901234567890
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+cccccccccccccccccccccccccccccccccccccccccccccccccc
+dddddddddddddddddddddddddddddddddddddddddddddddddd
+eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+for ./main N 4 one_producer # 5 producers - 5 consumers
+
+
+make -s N=25 test_1_prods_5_cons
+CHECKED prod_1.txt - CORRECT
+make -s show_result_and_delete
+12345678901234567890123456789012345678901234567890
+for ./main N 4 one_producer # 5 producers - 5 consumers
+
+make -s test_in_different_terminals
+
+========================================================================================================================
+
+jak widac kazdy z wykonywanych wariantow zadania jest wykonany poprawnie. zadanie dziala tez dla producentow i
+konsumentow utworzonych w osobnych terminalach, co swiadczy o tym, ze procesy nazwane dzialaja dla potokow nazwanych
+mozna to sprawdzic wywolujac od razu po zakonczeniu wyknoywania make test opcje make -s check_for_5_producers a nastepnie
+make -s show_result_and_delete. oba polecenia daja wyniki jak ponizej
+
+make -s check_for_5_producers
+CHECKED prod_1.txt - CORRECT
+CHECKED prod_2.txt - CORRECT
+CHECKED prod_3.txt - CORRECT
+CHECKED prod_4.txt - CORRECT
+CHECKED prod_5.txt - CORRECT
+
+make -s show_result_and_delete
+12345678901234567890123456789012345678901234567890
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+cccccccccccccccccccccccccccccccccccccccccccccccccc
+dddddddddddddddddddddddddddddddddddddddddddddddddd
+eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee

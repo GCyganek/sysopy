@@ -74,7 +74,6 @@ int main(int argc, char* argv[]) {
             buf_part = res_file_buf;
         }
     }
-    printf("%s\n", buf_part);
 
     if (!strcmp(buf_part, prod_file_buf)) {
         printf("CHECKED %s - CORRECT\n", argv[1]);

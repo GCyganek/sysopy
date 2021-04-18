@@ -145,16 +145,16 @@ int main(int argc, char* argv[]) {
     int ingredients_index;
 
     while (getline(&line, &line_size, commands_file) != -1) {
-        if (strlen(line) < 5) continue;  //ignoring the break line
+        if (strlen(line) < 5) continue;  // ignoring the break line
         line = strtok(line, "\n");
-        if (strchr(line, '=') != NULL) {  // reading components with commands
+        if (strchr(line, '=') != NULL) {  // reading ingredients with commands
             create_ingredient_from_line(line, table, line_index);
         }
 
         else {  // executing ingredients
             ingredients_index = 0;
             ingredient_name = strtok(line, "|");
-            while (ingredient_name != NULL) {
+            while (ingredient_name != NULL) { //
                 int len = strlen(ingredient_name);
                 while (ingredient_name[len - 1] == ' ') {
                     len -= 1;
@@ -182,9 +182,10 @@ int main(int argc, char* argv[]) {
 
                     pid_t pid = fork();
                     if (pid == 0) {
+                        close(current[0]);
                         if (i != 0 || j != 0) {
                             dup2(prev[0], STDIN_FILENO);
-                            close(prev[1]);
+                            close(prev[0]);
                         }
                         dup2(current[1], STDOUT_FILENO);
                         if (execvp(command->args[0], command->args) == -1) {
@@ -193,6 +194,9 @@ int main(int argc, char* argv[]) {
                     }
 
                     close(current[1]);
+                    if (commands_in_line > 0) {
+                        close(prev[0]);
+                    }
 
                     prev[0] = current[0];
                     prev[1] = current[1];
@@ -206,8 +210,11 @@ int main(int argc, char* argv[]) {
             command = ingredient->commands[j];
 
             if (pid == 0) {
-                close(prev[1]);
-                dup2(prev[0], STDIN_FILENO);
+                close(current[0]);
+                if (commands_in_line > 0) {
+                    dup2(prev[0], STDIN_FILENO);
+                    close(prev[0]);
+                }
 
                 if (execvp(command->args[0], command->args) == -1) {
                     exit(1);
@@ -217,6 +224,13 @@ int main(int argc, char* argv[]) {
 
             for (int i = 0; i < commands_in_line; i++) {
                 wait(NULL);
+            }
+
+            close(current[0]);
+            close(current[1]);
+            if(commands_in_line > 0) {
+                close(prev[0]);
+                close(prev[1]);
             }
 
             commands_in_line = 0;

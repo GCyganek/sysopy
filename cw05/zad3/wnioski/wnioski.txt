@@ -1,11 +1,14 @@
 Wynik dzialania make test, gdzie sprawdzamy kolejno 1. 5 porducentow, 1 konsument 2. 5 producentow, 5 konsumentow
-3. 1 producenta, 5 konsumentow; dla N = 5, 10, 25; za kazdym razem wywoluje ./check, ktory sprawdza poprawnosc
+3. 1 producenta, 5 konsumentow; dla N = 5, 25 i 5000; za kazdym razem wywoluje ./check, ktory sprawdza poprawnosc
 pliku result.txt do ktorego zapisuja wszyscy konsumenci, przykladowo ./check prod_1.txt result.txt 1 sprawdza, czy
 result.txt rzeczywiscie zawiera dane z prod_1.txt i zwraca "CHECKED prod_1.txt - CORRECT" jesli zawiera oraz
 "CHECKED prod_1.txt - WRONG" w przeciwnym wypadku
+dla N = 5 i 25 producenci maja pliki tekstowe po 50 znakow
+dla N = 5000 producenci maja pliki tekstowe po 5000 znakow
 
 =====DZIALANIE=make=test================================================================================================
 
+make -s generate_txt
 make -s N=5 test_5_prods_1_cons
 CHECKED prod_1.txt - CORRECT
 CHECKED prod_2.txt - CORRECT
@@ -36,42 +39,6 @@ for ./main N 4 one_producer # 5 producers - 5 consumers
 
 
 make -s N=5 test_1_prods_5_cons
-CHECKED prod_1.txt - CORRECT
-make -s show_result_and_delete
-12345678901234567890123456789012345678901234567890
-for ./main N 4 one_producer # 5 producers - 5 consumers
-
-
-make -s N=10 test_5_prods_1_cons
-CHECKED prod_1.txt - CORRECT
-CHECKED prod_2.txt - CORRECT
-CHECKED prod_3.txt - CORRECT
-CHECKED prod_4.txt - CORRECT
-CHECKED prod_5.txt - CORRECT
-make -s show_result_and_delete
-12345678901234567890123456789012345678901234567890
-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-cccccccccccccccccccccccccccccccccccccccccccccccccc
-dddddddddddddddddddddddddddddddddddddddddddddddddd
-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-for ./main N 4 one_producer # 5 producers - 1 consumer
-
-make -s N=10 test_5_prods_5_cons
-CHECKED prod_1.txt - CORRECT
-CHECKED prod_2.txt - CORRECT
-CHECKED prod_3.txt - CORRECT
-CHECKED prod_4.txt - CORRECT
-CHECKED prod_5.txt - CORRECT
-make -s show_result_and_delete
-12345678901234567890123456789012345678901234567890
-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-cccccccccccccccccccccccccccccccccccccccccccccccccc
-dddddddddddddddddddddddddddddddddddddddddddddddddd
-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-for ./main N 4 one_producer # 5 producers - 5 consumers
-
-
-make -s N=10 test_1_prods_5_cons
 CHECKED prod_1.txt - CORRECT
 make -s show_result_and_delete
 12345678901234567890123456789012345678901234567890
@@ -113,7 +80,49 @@ make -s show_result_and_delete
 12345678901234567890123456789012345678901234567890
 for ./main N 4 one_producer # 5 producers - 5 consumers
 
+
+rm -f prod_1.txt prod_2.txt prod_3.txt prod_4.txt prod_5.txt
+make -s generate_big_txt
+make -s N=5000 test_5_prods_1_cons
+CHECKED prod_1.txt - CORRECT
+CHECKED prod_2.txt - CORRECT
+CHECKED prod_3.txt - WRONG
+CHECKED prod_4.txt - CORRECT
+CHECKED prod_5.txt - WRONG
+make -s show_result_and_delete
+12345678901234567890123456789012345678901234567890 -> dla zmniejszenia rozmiaru pliku obcialem otrzymywany wynik dla N=5000. mozna samemu sprawdzic, ze zwraca 5000 znakow w kazdej linijce wykonujac make test
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+cccccccccccccccccccccccccccccccccccccccccccccccccc
+dddddddddddddddddddddddddddddddddddddddddddddddddd
+eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+for ./main N 4 one_producer # 5 producers - 1 consumer
+
+make -s N=5000 test_5_prods_5_cons
+CHECKED prod_1.txt - CORRECT
+CHECKED prod_2.txt - CORRECT
+CHECKED prod_3.txt - CORRECT
+CHECKED prod_4.txt - CORRECT
+CHECKED prod_5.txt - CORRECT
+make -s show_result_and_delete
+12345678901234567890123456789012345678901234567890
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+cccccccccccccccccccccccccccccccccccccccccccccccccc
+dddddddddddddddddddddddddddddddddddddddddddddddddd
+eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+for ./main N 4 one_producer # 5 producers - 5 consumers
+
+
+make -s N=5000 test_1_prods_5_cons
+CHECKED prod_1.txt - CORRECT
+make -s show_result_and_delete
+12345678901234567890123456789012345678901234567890
+for ./main N 4 one_producer # 5 producers - 5 consumers
+
+
+rm -f prod_1.txt prod_2.txt prod_3.txt prod_4.txt prod_5.txt
+make -s generate_txt
 make -s test_in_different_terminals
+
 
 ========================================================================================================================
 

@@ -103,13 +103,13 @@ int main(int argc, char* argv[]) {
 
     int row_id;
     int chars_read;
-    int lock, unlock;
     while((chars_read = read(fifo_file, buffer, (N + 2) * sizeof(char))) > 0) {
+        buffer[chars_read] = '\0';
         row_id = atoi(&buffer[0]);
         to_text_file = buffer + 2;
-        if ((lock = flock(text_file_descriptor, LOCK_EX)) < 0) flock_err();
+        if (flock(text_file_descriptor, LOCK_EX) < 0) flock_err();
         rewrite_modified_file(text_file, row_id, to_text_file);
-        if ((unlock = flock(text_file_descriptor, LOCK_UN)) < 0) flock_err();
+        if (flock(text_file_descriptor, LOCK_UN) < 0) flock_err();
     }
     free(buffer);
     fclose(text_file);

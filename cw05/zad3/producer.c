@@ -37,6 +37,7 @@ int main(int argc, char* argv[]) {
     int chars_read;
     while((chars_read = read(text_file, buffer, sizeof(char) * N)) > 0) {
         sleep(rand() % 2 + 1);
+        buffer[chars_read] = '\0';
         char to_fifo[chars_read + 3];
         sprintf(to_fifo, "%d|%s", row_number, buffer);
         if (flock(fifo_file, LOCK_EX) == -1 ) {

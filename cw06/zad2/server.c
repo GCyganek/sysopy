@@ -144,7 +144,8 @@ void stop_handler(char *msg) {
 void init_handler(char *msg) {
     int new_client_id = get_first_free_client_id();
     if (new_client_id == -1) {
-        print_error_to_stderr_and_quit("Too many clients already registered.\n");
+        fprintf(stderr, "Too many clients already registered.\n");
+        exit(EXIT_FAILURE);
     }
 
     client* client = calloc(1, sizeof(client));

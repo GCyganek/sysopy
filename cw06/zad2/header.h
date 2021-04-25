@@ -37,7 +37,6 @@ typedef struct client {
 } client;
 
 
-void print_error_to_stderr_and_quit(char *error_msg);
 void send_message_to_queue(mqd_t queue_descriptor, char *msg, unsigned int type);
 void get_message_from_queue(mqd_t queue_descriptor, char *msg, unsigned int *type);
 void register_notification(mqd_t queue_descriptor, struct sigevent *s_sigevent);

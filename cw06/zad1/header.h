@@ -41,7 +41,6 @@ typedef struct message {
 
 #define MAX_MESSAGE_SIZE sizeof(message) - sizeof(long)
 
-void print_error_to_stderr_and_quit(char* error_msg);
 char* get_home_path();
 key_t get_public_key();
 key_t get_private_key();

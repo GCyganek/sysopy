@@ -50,7 +50,7 @@ void disconnect_handler() {
     connected_client_queue_id = -1;
 }
 
-void register_to_server() {
+void register_on_server() {
     key_t public_key = get_public_key();
     server_queue_id = get_queue_id(public_key);
 
@@ -95,6 +95,7 @@ void connect_handler(message* msg) {
 
     if (msg->sender_id == -2) {
         printf("can't connect with client who does not exist, try LIST to see available clients\n");
+        return;
     }
 
     int connected_client_id = msg->sender_id;
@@ -211,7 +212,7 @@ int main() {
     sigaction(SIGRTMIN, &sigact, NULL);
 
     signal(SIGINT, sigint_handler);
-    register_to_server();
+    register_on_server();
 
     printf("use commands: STOP | CONNECT [client_id] | DISCONNECT | LIST | MESSAGE [msg_text]\n\n");
 

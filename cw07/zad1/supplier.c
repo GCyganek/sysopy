@@ -10,13 +10,15 @@ int pizza_type;
 
 struct sembuf decrement_pizzas_counter = {TABLE_PIZZAS_COUNT_SEMAPHORE, -1, 0};
 struct sembuf get_from_table = {TABLE_SPACE_SEMAPHORE, 1, 0};
+struct sembuf lock_table = {TABLE_AVAILABLE_SEMAPHORE, -1, 0};
+struct sembuf unlock_table = {TABLE_AVAILABLE_SEMAPHORE, 1, 0};
 
 void take_pizza_from_table() {
     struct sembuf operations[3] = { decrement_pizzas_counter, lock_table, get_from_table };  // wait til the table is is available and then lock it and take a pizza
-    semop(semaphores_id, operations, 3);
+    operations_on_sems(semaphores_id, operations, 3);
 
     pizzeria *p = shmat(shared_memory_id, NULL, 0);
-    if (p == NULL) {
+    if (p == (void *) -1) {
         fprintf(stderr, "Error while getting shared memory info: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
@@ -30,7 +32,7 @@ void take_pizza_from_table() {
     printf("(%d %s) Pobieram pizze: %d. Liczba pizz na stole: %d.\n",
            getpid(), time, pizza_type, p->pizzas_on_table);
 
-    semop(semaphores_id, &unlock_table, 1);  // we unlock the furnace
+    operation_on_sem(semaphores_id, &unlock_table);  // we unlock the furnace
     shmdt(p);
 }
 

@@ -5,11 +5,11 @@ all: main cook supplier
 main: main.c
 	$(CC) main.c -o main
 
-cook: cook.c
-	$(CC) cook.c -o cook
+cook: cook.c common.c
+	$(CC) common.c cook.c -o cook
 
-supplier: supplier.c
-	$(CC) supplier.c -o supplier
+supplier: supplier.c common.c
+	$(CC) common.c supplier.c -o supplier
 
 clean:
 	rm -f main supplier cook

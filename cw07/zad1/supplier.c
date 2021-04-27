@@ -62,9 +62,7 @@ int main() {
     }
 
     while(1) {
-        if (semctl(semaphores_id, TABLE_SPACE_SEMAPHORE, GETVAL, NULL) < TABLE_CAPACITY) {
-            take_pizza_from_table();
-            deliver_pizza();
-        }
+        take_pizza_from_table();
+        deliver_pizza();
     }
 }

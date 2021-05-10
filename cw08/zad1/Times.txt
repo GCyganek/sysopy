@@ -1,0 +1,119 @@
+Pomiary czasu dla totem.ascii.pgm o wymiarach 640x480:
+
+Number of threads: 1 	 Mode: numbers
+Thread 1 	 1827.622 microseconds
+
+Full time 2033.866 microseconds
+==============================
+
+Number of threads: 2 	 Mode: numbers
+Thread 1 	 1512.708 microseconds
+Thread 2 	 1353.690 microseconds
+
+Full time 2173.708 microseconds
+==============================
+
+Number of threads: 4 	 Mode: numbers
+Thread 1 	 868.461 microseconds
+Thread 2 	 1541.189 microseconds
+Thread 3 	 1320.977 microseconds
+Thread 4 	 865.630 microseconds
+
+Full time 2455.173 microseconds
+==============================
+
+Number of threads: 8 	 Mode: numbers
+Thread 1 	 912.558 microseconds
+Thread 2 	 886.437 microseconds
+Thread 3 	 915.350 microseconds
+Thread 4 	 1557.533 microseconds
+Thread 5 	 1841.911 microseconds
+Thread 6 	 793.017 microseconds
+Thread 7 	 794.776 microseconds
+Thread 8 	 778.419 microseconds
+
+Full time 3832.407 microseconds
+==============================
+
+Number of threads: 16 	 Mode: numbers
+Thread 1 	 960.064 microseconds
+Thread 2 	 880.338 microseconds
+Thread 3 	 850.720 microseconds
+Thread 4 	 873.176 microseconds
+Thread 5 	 3285.376 microseconds
+Thread 6 	 2082.952 microseconds
+Thread 7 	 1989.644 microseconds
+Thread 8 	 1503.227 microseconds
+Thread 9 	 1235.774 microseconds
+Thread 10 	 776.384 microseconds
+Thread 11 	 784.603 microseconds
+Thread 12 	 787.131 microseconds
+Thread 13 	 776.618 microseconds
+Thread 14 	 778.149 microseconds
+Thread 15 	 757.297 microseconds
+Thread 16 	 1650.549 microseconds
+
+Full time 5529.306 microseconds
+==============================
+
+Number of threads: 1 	 Mode: block
+Thread 1 	 811.589 microseconds
+
+Full time 1036.144 microseconds
+==============================
+
+Number of threads: 2 	 Mode: block
+Thread 1 	 417.779 microseconds
+Thread 2 	 398.694 microseconds
+
+Full time 709.989 microseconds
+==============================
+
+Number of threads: 4 	 Mode: block
+Thread 1 	 277.955 microseconds
+Thread 2 	 237.447 microseconds
+Thread 3 	 232.306 microseconds
+Thread 4 	 219.646 microseconds
+
+Full time 760.793 microseconds
+==============================
+
+Number of threads: 8 	 Mode: block
+Thread 1 	 188.084 microseconds
+Thread 2 	 158.002 microseconds
+Thread 3 	 106.946 microseconds
+Thread 4 	 151.777 microseconds
+Thread 5 	 105.311 microseconds
+Thread 6 	 395.732 microseconds
+Thread 7 	 105.262 microseconds
+Thread 8 	 106.164 microseconds
+
+Full time 730.187 microseconds
+==============================
+
+Number of threads: 16 	 Mode: block
+Thread 1 	 133.828 microseconds
+Thread 2 	 56.550 microseconds
+Thread 3 	 103.077 microseconds
+Thread 4 	 101.438 microseconds
+Thread 5 	 56.379 microseconds
+Thread 6 	 57.633 microseconds
+Thread 7 	 72.197 microseconds
+Thread 8 	 60.486 microseconds
+Thread 9 	 259.721 microseconds
+Thread 10 	 55.639 microseconds
+Thread 11 	 335.535 microseconds
+Thread 12 	 56.417 microseconds
+Thread 13 	 68.128 microseconds
+Thread 14 	 136.934 microseconds
+Thread 15 	 55.419 microseconds
+Thread 16 	 69.931 microseconds
+
+Full time 924.806 microseconds
+==============================
+
+Mozna wywnioskowac, ze dla metody block watki dziela obraz na mniejsze czesci i ich czas wykonywania jest krotszy, w
+przeciwienstwie do watkow z metody numbers, gdzie watki i tak musza przejsc przez caly obraz i zmienic tylko te wartosci
+do ktorych zostaly wyznaczone. Zdecydowanie szybsza metoda z tego wzgledu jest metoda block, co widac takze w pomiarach
+czasu dla dzialania calego programu. Dla obu metod czas dzialania programu zwykle zwieksza sie wraz ze wzrotem liczby
+watkow, ktore biora udzial w rozdzielaniu zadania. Wiaze sie to z obsluga tworzenia i zakonczenia watkow

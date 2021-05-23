@@ -10,6 +10,8 @@
 #include <pthread.h>
 #include <time.h>
 
+// program is running until DELIVERS_TO_FINISH deliveries are finished and PROBLEMS_TO_SOLVE are solved by santa
+
 #define ELF_COUNT 10
 #define REINDEER_COUNT 9
 #define DELIVERIES_TO_FINISH 10
@@ -32,14 +34,13 @@ pthread_cond_t something_to_do = PTHREAD_COND_INITIALIZER;
 //  used by elves to make sure that there are max 3 elves waiting in front of the santa's workshop
 pthread_cond_t elves_waiting = PTHREAD_COND_INITIALIZER;
 
-
 int ready_reindeer = 0;
 int waiting_elves = 0;
 int sleeping = 0;
 
 //  threads finish condition
-char deliveries = 0;
-char problems_solved = 0;
+int deliveries = 0;
+int problems_solved = 0;
 
 int elves_queue[3];
 
@@ -80,15 +81,20 @@ void santa_claus() {
                 pthread_cond_broadcast(&santa_ready_to_help);
                 printf("Mikolaj: Rozwiazuje problemy elfow %d %d %d\n",
                        elves_queue[0], elves_queue[1], elves_queue[2]);
-                problems_solved++;
+
                 pthread_mutex_unlock(&elves_mutex);
                 sleep(2);
+                problems_solved++;
 
 //                notify elves that 3 elves are coming back
                 pthread_mutex_lock(&elves_mutex);
                 waiting_elves = 0;
                 pthread_cond_broadcast(&elves_waiting);
                 pthread_mutex_unlock(&elves_mutex);
+            } else {
+                pthread_mutex_unlock(&elves_mutex);
+                printf("Error, santa woke up when not enough elves and reindeer were waiting");
+                pthread_exit((void *)1);
             }
         }
     }
@@ -109,6 +115,7 @@ void wait_and_wake_up_santa(int id) {
 //    wake up santa, there are no reindeer waiting and he can help you solve the problem
     printf("Elf (id %d): Wybudzam Mikolaja\n", id);
     pthread_cond_broadcast(&something_to_do);
+    pthread_mutex_lock(&elves_mutex);
     pthread_mutex_unlock(&sleeping_mutex);
     pthread_mutex_unlock(&reindeer_mutex);
 }
@@ -151,7 +158,6 @@ void elf(int* elf_id) {
             printf("Elf (id %d): czeka %d elfow na Mikolaja\n", *elf_id, waiting_elves);
             pthread_mutex_unlock(&elves_mutex);
             wait_and_wake_up_santa(*elf_id);
-            pthread_mutex_lock(&elves_mutex);
 //            you woke up santa, now wait for the signal from him to solve the problem
             pthread_cond_wait(&santa_ready_to_help, &elves_mutex);
         }

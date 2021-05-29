@@ -3,7 +3,6 @@
 //
 
 #include "common.h"
-#include <signal.h>
 
 char* client_name;
 int server_socket;
@@ -33,7 +32,6 @@ char *task;
 char *task_args;
 
 int check_draw() {
-    // primitive version just for testing now
     int draw = 1;
     for (int i = 0; i < 9; i++) {
         if (tictactoe_game.board[i] == EMPTY) {
@@ -90,12 +88,13 @@ void disconnect() {
     if (send(server_socket, msg, MAX_MESSAGE_LENGTH, 0) == -1)
         print_error_and_exit("Error while sending disconnect message using send()");
     close(server_socket);
+    printf("Disconnecting\n");
     exit(0);
 }
 
 void draw_board() {
     printf("\n\n");
-    printf("CURRENT GAME BOARD\n");
+    printf("CURRENT GAME BOARD. Your symbol: %s\n", symbol == 1 ? "O" : "X");
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             if (tictactoe_game.board[i * 3 + j] == EMPTY) {
@@ -250,7 +249,6 @@ void client_loop() {
             // printf("Ping received\n");
             char msg[MAX_MESSAGE_LENGTH + 1];
             sprintf(msg, "ping_response| |%s", client_name);
-            // printf("%s\n", msg);
             if (send(server_socket, msg, MAX_MESSAGE_LENGTH, 0) == -1)
                 print_error_and_exit("Error while responding to ping using send()");
         }
@@ -285,7 +283,6 @@ void client_loop() {
                     tictactoe_game.board[i] = EMPTY;
                 }
                 tictactoe_game.status = symbol == O ? WAITING_FOR_PLAYER : WAITING_FOR_OPPONENT;
-                printf("status: %d\n", tictactoe_game.status);
 
                 pthread_t game_thread;
                 if (pthread_create(&game_thread, NULL, (void *(*)(void *))game_loop, NULL) != 0)
@@ -330,13 +327,13 @@ int main(int argc, char** argv) {
 
     signal(SIGINT, handle_sigint);
 
-    printf("Lacze sie z serwerem\n");
+    // printf("Lacze sie z serwerem\n");
     connect_to_server(connect_mode, server_address);
 
-    printf("Rejestruje sie na serwerze\n");
+    // printf("Rejestruje sie na serwerze\n");
     register_to_server_clients_list();
 
-    printf("Wchodze do petli klienta\n");
+    // printf("Wchodze do petli klienta\n");
     client_loop();
 
     return 0;

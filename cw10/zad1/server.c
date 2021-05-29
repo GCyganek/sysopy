@@ -58,6 +58,7 @@ void set_opponent(int client_fd, int client_id) {
 void save_client(int client_fd, char *client_name) {
     if (get_client_by_name(client_name) != -1) {
         client_name_already_taken(client_fd);
+        return;
     }
 
     int assigned_index = -1;
@@ -80,7 +81,7 @@ void save_client(int client_fd, char *client_name) {
 
         set_opponent(client_fd, assigned_index);
 
-        printf("opponent %d \n", client->opponent_fd);
+        // printf("opponent %d \n", client->opponent_fd);
 
         if (client->opponent_fd == -1) {
             if (send(client_fd, "save_response|no_opponent", MAX_MESSAGE_LENGTH, 0) == -1)
@@ -139,6 +140,7 @@ void sigint_handle(int signo) {
     }
     close(network_socket);
     close(local_socket);
+    printf("Server closed successfully...\n");
     exit(0);
 }
 
@@ -153,7 +155,7 @@ void remove_disconnected_clients() {
 void test_client_connections() {
     for (int i = 0; i < MAX_CLIENTS; i++) {
         if (clients[i] != NULL) {
-            printf("Ping sent to %s\n", clients[i]->name);
+            // printf("Ping sent to %s\n", clients[i]->name);
             if (send(clients[i]->fd, "ping|", MAX_MESSAGE_LENGTH, 0) == -1)
                 print_error_and_exit("Error while testing client connection");
             clients[i]->status = DISABLED;
@@ -162,7 +164,7 @@ void test_client_connections() {
 }
 
 void pinging() {
-    printf("Ping loop starting\n");
+    // printf("Ping loop starting\n");
     while(1) {
         sleep(5);
         printf("Pinging\n");
@@ -256,13 +258,14 @@ int start_network_socket(char *port) {
 } 
 
 void server_loop() {
-        while(1) {
+    printf("Server running...\n");
+    while(1) {
         int fd_to_read = poll_sockets(network_socket, local_socket);
 
-        printf("descriptor %d\n", fd_to_read);
+        // printf("descriptor %d\n", fd_to_read);
 // accepting connections from clients
         if (fd_to_read == local_socket || fd_to_read == network_socket) {
-            printf("Nawiazuje polaczenie z klientem\n");
+            // printf("Nawiazuje polaczenie z klientem\n");
             if ((fd_to_read = accept(fd_to_read, NULL, NULL)) == -1) 
                 print_error_and_exit("Error while using accept in poll_sockets");
         }
@@ -273,7 +276,7 @@ void server_loop() {
         if (recv(fd_to_read, buffer, MAX_MESSAGE_LENGTH, 0) == -1)
             print_error_and_exit("Error while reading message from client using recv()");
         
-        printf("Przyszla wiadomosc %s\n", buffer);
+        printf("Received message %s\n", buffer);
         
         char *task = strtok(buffer, "|");
         char *task_args = strtok(NULL, "|");
@@ -319,6 +322,8 @@ int main(int argc, char** argv) {
     char* port = argv[1];
     char* socket_path = argv[2];
 
+    signal(SIGINT, sigint_handle);
+
     memset(&clients, 0, sizeof(clients));
 
     local_socket = start_local_socket(socket_path);
@@ -328,7 +333,6 @@ int main(int argc, char** argv) {
     if (pthread_create(&pinging_thread, NULL, (void* (*)(void*))pinging, NULL) != 0)
         print_error_and_exit("Error while creating pinging thread");
 
-    printf("Wchodze do petli\n");
     server_loop();
 
     return 0;

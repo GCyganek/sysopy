@@ -14,6 +14,7 @@
 #include <sys/un.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <signal.h>
 
 #define MAX_MESSAGE_LENGTH 128
 #define MAX_CLIENTS 16

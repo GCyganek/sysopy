@@ -210,8 +210,7 @@ int poll_sockets(int network_socket, int local_socket) {
     return fd_to_read;
 }
 
-int start_local_socket(char *socket_path) {
-    int local_socket;
+void start_local_socket(char *socket_path) {
     if ((local_socket = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
         print_error_and_exit("Error while using socket in start_local_socket");
     
@@ -226,11 +225,9 @@ int start_local_socket(char *socket_path) {
 
     if (listen(local_socket, MAX_CLIENTS) == -1)
         print_error_and_exit("Error while using listen in start_local_socket");
-
-    return local_socket;
 }
 
-int start_network_socket(char *port) {
+void start_network_socket(char *port) {
     struct addrinfo hints;
     memset(&hints, 0, sizeof(struct addrinfo));
     hints.ai_flags = AI_PASSIVE;
@@ -242,7 +239,6 @@ int start_network_socket(char *port) {
     if (getaddrinfo(NULL, port, &hints, &res) != 0)
         print_error_and_exit("Error while using getaddrinfo in start_network_socket");
 
-    int network_socket;
     if ((network_socket = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1) 
         print_error_and_exit("Error while using socket in start_network_socket");
 
@@ -253,8 +249,6 @@ int start_network_socket(char *port) {
         print_error_and_exit("Error while using listen in start_network_socket");
 
     freeaddrinfo(res);
-
-    return network_socket;
 } 
 
 void server_loop() {
@@ -326,8 +320,8 @@ int main(int argc, char** argv) {
 
     memset(&clients, 0, sizeof(clients));
 
-    local_socket = start_local_socket(socket_path);
-    network_socket = start_network_socket(port);
+    start_local_socket(socket_path);
+    start_network_socket(port);
 
     pthread_t pinging_thread;
     if (pthread_create(&pinging_thread, NULL, (void* (*)(void*))pinging, NULL) != 0)

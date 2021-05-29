@@ -297,17 +297,20 @@ void client_loop() {
 
         else if (!strcmp(task, "disconnect")) {
             printf("Your opponent has disconnected from the server\n");
-            disconnect();
+            close(server_socket);
+            exit(0);
         }
 
         else if (!strcmp(task, "server_close")) {
             printf("Server has been closed\n");
-            disconnect();
+            close(server_socket);
+            exit(0);
         }
 
         else if (!strcmp(task, "no_ping_response")) {
             printf("No ping response\n");
-            disconnect();
+            close(server_socket);
+            exit(0);
         }
 
         pthread_mutex_unlock(&mutex);

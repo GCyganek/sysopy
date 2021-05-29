@@ -127,7 +127,6 @@ void connect_to_server(char *server_address) {
     if (!is_connection_local) {
         struct addrinfo hints;
         memset(&hints, 0, sizeof(struct addrinfo));
-        hints.ai_flags = AI_PASSIVE;
         hints.ai_family = AF_INET;
         hints.ai_socktype = SOCK_DGRAM;
 

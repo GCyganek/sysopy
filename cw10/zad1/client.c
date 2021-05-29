@@ -124,7 +124,6 @@ void connect_to_server(char *connect_mode, char *server_address) {
     if (!strcmp(connect_mode, "network")) {
         struct addrinfo hints;
         memset(&hints, 0, sizeof(struct addrinfo));
-        hints.ai_flags = AI_PASSIVE;
         hints.ai_family = AF_INET;
         hints.ai_socktype = SOCK_STREAM;
 

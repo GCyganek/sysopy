@@ -6,6 +6,9 @@
 
 char* client_name;
 int server_socket;
+char* connect_mode;
+char* server_address;
+char* server_port;
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t condition = PTHREAD_COND_INITIALIZER;
@@ -120,45 +123,6 @@ void handle_sigint(int sig_no) {
     exit(0);
 }
 
-void connect_to_server(char *connect_mode, char *server_address) {
-    if (!strcmp(connect_mode, "network")) {
-        struct addrinfo hints;
-        memset(&hints, 0, sizeof(struct addrinfo));
-        hints.ai_family = AF_INET;
-        hints.ai_socktype = SOCK_STREAM;
-
-        struct addrinfo *res;
-
-        if (getaddrinfo("localhost", server_address, &hints, &res) != 0)
-            print_error_and_exit("Error while using getaddrinfo in connect_to_server:");
-
-        if ((server_socket = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1) 
-            print_error_and_exit("Error while using socket in connect_to_server:");
-
-        if (connect(server_socket, res->ai_addr, res->ai_addrlen) == -1)
-            print_error_and_exit("Error while using connect in connect_to_server:");
-
-        freeaddrinfo(res);
-    }
-
-    else if (!strcmp(connect_mode, "local")) {
-        server_socket = socket(AF_UNIX, SOCK_STREAM, 0);
-
-        struct sockaddr_un sockaddr;
-        memset(&sockaddr, 0, sizeof(struct sockaddr_un));
-        sockaddr.sun_family = AF_UNIX;
-        strncpy(sockaddr.sun_path, server_address, strlen(server_address));
-
-        if (connect(server_socket, (struct sockaddr*)&sockaddr, sizeof(struct sockaddr_un)) == -1)
-            print_error_and_exit("Error while connecting to server in connect_to_server:");
-    }
-
-    else {
-        fprintf(stderr, "Wrong connect_mode given\n");
-        exit(1);
-    }
-}
-
 int check_choosen_field(int choosen_field) {
     if (tictactoe_game.board[choosen_field] == EMPTY) {
         tictactoe_game.board[choosen_field] = symbol;
@@ -224,13 +188,6 @@ void game_loop() {
         
         pthread_mutex_unlock(&mutex);
     }
-}
-
-void register_to_server_clients_list() {
-    char msg[MAX_MESSAGE_LENGTH + 1];
-    sprintf(msg, "save| |%s", client_name);
-    if (send(server_socket, msg, MAX_MESSAGE_LENGTH, 0) == -1)
-        print_error_and_exit("Error while trying to register to server's clients list");
 }
 
 void client_loop() {
@@ -316,21 +273,70 @@ void client_loop() {
     }
 }
 
+void register_to_server_clients_list() {
+    char msg[MAX_MESSAGE_LENGTH + 1];
+    sprintf(msg, "save| |%s", client_name);
+    if (send(server_socket, msg, MAX_MESSAGE_LENGTH, 0) == -1)
+        print_error_and_exit("Error while trying to register to server's clients list");
+}
+
+void connect_to_server() {
+    if (!strcmp(connect_mode, "network")) {
+        struct addrinfo hints;
+        memset(&hints, 0, sizeof(struct addrinfo));
+        hints.ai_family = AF_INET;
+        hints.ai_socktype = SOCK_STREAM;
+
+        struct addrinfo *res;
+
+        if (getaddrinfo(server_address, server_port, &hints, &res) != 0)
+            print_error_and_exit("Error while using getaddrinfo in connect_to_server:");
+
+        if ((server_socket = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1) 
+            print_error_and_exit("Error while using socket in connect_to_server:");
+
+        if (connect(server_socket, res->ai_addr, res->ai_addrlen) == -1)
+            print_error_and_exit("Error while using connect in connect_to_server:");
+
+        freeaddrinfo(res);
+    }
+
+    else if (!strcmp(connect_mode, "local")) {
+        server_socket = socket(AF_UNIX, SOCK_STREAM, 0);
+
+        struct sockaddr_un sockaddr;
+        memset(&sockaddr, 0, sizeof(struct sockaddr_un));
+        sockaddr.sun_family = AF_UNIX;
+        strncpy(sockaddr.sun_path, server_address, strlen(server_address));
+
+        if (connect(server_socket, (struct sockaddr*)&sockaddr, sizeof(struct sockaddr_un)) == -1)
+            print_error_and_exit("Error while connecting to server in connect_to_server:");
+    }
+
+    else {
+        fprintf(stderr, "Wrong connect_mode given\n");
+        exit(1);
+    }
+}
+
 int main(int argc, char** argv) {
-    if (argc != 4) {
+    if ((argc !=5 && !strcmp(argv[2], "network")) || (argc != 4 && !strcmp(argv[2], "local"))) {
         fprintf(stderr, "Not a suitable number of program parameters. "
-                        "Expected: ./client client_name connect_mode server_address \n");
+                        "Expected: ./client client_name connect_mode server_address (and server_port if connect_mode == network)\n");
         return 1;
     }
 
     client_name = argv[1];
-    char* connect_mode = argv[2];
-    char* server_address = argv[3];
+    connect_mode = argv[2];
+    server_address = argv[3];
+    if (!strcmp(connect_mode, "network")) {
+        server_port = argv[4];
+    }
 
     signal(SIGINT, handle_sigint);
 
     // printf("Lacze sie z serwerem\n");
-    connect_to_server(connect_mode, server_address);
+    connect_to_server();
 
     // printf("Rejestruje sie na serwerze\n");
     register_to_server_clients_list();

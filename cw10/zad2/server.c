@@ -26,6 +26,7 @@ client *clients[MAX_CLIENTS];
 
 int local_socket;
 int network_socket;
+char* socket_path;
 
 int get_client_by_name(char *client_name) {
     for (int i = 0; i < MAX_CLIENTS; i++) {
@@ -36,8 +37,8 @@ int get_client_by_name(char *client_name) {
     return -1;
 }
 
-void client_name_already_taken(int client_fd) {
-    if (send(client_fd, "save_response|name_already_taken", MAX_MESSAGE_LENGTH, 0) == -1)
+void client_name_already_taken(int client_fd, struct sockaddr client_addr) {
+    if (sendto(client_fd, "save_response|name_already_taken", MAX_MESSAGE_LENGTH, 0, &client_addr, sizeof(struct addrinfo)) == -1)
         print_error_and_exit("Error while responding to client save message - name already taken");
     close(client_fd);
 }
@@ -58,7 +59,7 @@ void set_opponent(int client_fd, int client_id) {
 
 void save_client(int client_fd, char *client_name, struct sockaddr client_addr) {
     if (get_client_by_name(client_name) != -1) {
-        client_name_already_taken(client_fd);
+        client_name_already_taken(client_fd, client_addr);
         return;
     }
 
@@ -77,14 +78,11 @@ void save_client(int client_fd, char *client_name, struct sockaddr client_addr) 
         client->fd = client_fd;
         client->addr = client_addr;
         client->status = ACTIVE;
-        // printf("%s %d\n", client->name, client->fd);
 
         clients[assigned_index] = client;
         clients_connected++;
 
         set_opponent(client_fd, assigned_index);
-
-        // printf("opponent %d \n", client->opponent_fd);
 
         if (client->opponent_fd == -1) {
             if (sendto(client_fd, "save_response|no_opponent", MAX_MESSAGE_LENGTH, 0,
@@ -148,6 +146,7 @@ void sigint_handle(int signo) {
     }
     close(network_socket);
     close(local_socket);
+    unlink(socket_path);
     printf("Server closed successfully...\n");
     exit(0);
 }
@@ -208,14 +207,14 @@ int poll_sockets(int network_socket, int local_socket) {
     return fd_to_read;
 }
 
-void start_local_socket(char *socket_path) {
+void start_local_socket() {
     if ((local_socket = socket(AF_UNIX, SOCK_DGRAM, 0)) == -1)
         print_error_and_exit("Error while using socket in start_local_socket");
     
     struct sockaddr_un name;
     memset(&name, 0, sizeof(name));
     name.sun_family = AF_UNIX;
-    strncpy(name.sun_path, socket_path, sizeof(name.sun_path) - 1);
+    strcpy(name.sun_path, socket_path);
 
     unlink(socket_path);
     if (bind(local_socket, (struct sockaddr *)&name, sizeof(name)) == -1)
@@ -247,13 +246,12 @@ void server_loop() {
     printf("Server running...\n");
     while(1) {
         int fd_to_read = poll_sockets(network_socket, local_socket);
-
-        printf("descriptor %d\n", fd_to_read);
+        
         struct sockaddr client_addr;
         socklen_t length = sizeof(client_addr);
         char buffer[MAX_MESSAGE_LENGTH + 1];
         if (recvfrom(fd_to_read, buffer, MAX_MESSAGE_LENGTH, 0, &client_addr, &length) == -1)
-            print_error_and_exit("Error while reading message from client using recv()");
+            print_error_and_exit("Error while reading message from client using recvfrom()");
         
         printf("Received message %s\n", buffer);
         
@@ -300,13 +298,13 @@ int main(int argc, char** argv) {
     }
 
     char* port = argv[1];
-    char* socket_path = argv[2];
+    socket_path = argv[2];
 
     signal(SIGINT, sigint_handle);
 
     memset(&clients, 0, sizeof(clients));
 
-    start_local_socket(socket_path);
+    start_local_socket();
     start_network_socket(port);
 
     pthread_t pinging_thread;

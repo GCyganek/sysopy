@@ -6,9 +6,12 @@
 
 char* client_name;
 int server_socket;
-int bind_socket;
-char is_connection_local;
+int client_socket;
 struct sockaddr_un sockaddr;
+char* connect_mode;
+char* server_address;
+char* server_port;
+char is_local;
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t condition = PTHREAD_COND_INITIALIZER;
@@ -92,6 +95,9 @@ void disconnect() {
         print_error_and_exit("Error while sending disconnect message using send()");
     close(server_socket);
     printf("Disconnecting\n");
+    if (is_local) {
+        unlink(client_name);
+    }
     exit(0);
 }
 
@@ -121,52 +127,6 @@ void handle_sigint(int sig_no) {
     (void) sig_no;
     disconnect();
     exit(0);
-}
-
-void connect_to_server(char *server_address) {
-    if (!is_connection_local) {
-        struct addrinfo hints;
-        memset(&hints, 0, sizeof(struct addrinfo));
-        hints.ai_family = AF_INET;
-        hints.ai_socktype = SOCK_DGRAM;
-
-        struct addrinfo *res;
-
-        if (getaddrinfo("127.0.0.1", server_address, &hints, &res) != 0)
-            print_error_and_exit("Error while using getaddrinfo in connect_to_server");
-
-        if ((server_socket = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1) 
-            print_error_and_exit("Error while using socket (network) in connect_to_server");
-
-        if (connect(server_socket, res->ai_addr, res->ai_addrlen) == -1)
-            print_error_and_exit("Error while using connect in connect_to_server");
-
-        freeaddrinfo(res);
-    }
-
-    else {
-        server_socket = socket(AF_UNIX, SOCK_DGRAM, 0);
-        if (server_socket == -1)
-            print_error_and_exit("Error while using socket (local) in connect_to_server");
-
-        memset(&sockaddr, 0, sizeof(struct sockaddr_un));
-        sockaddr.sun_family = AF_UNIX;
-        strncpy(sockaddr.sun_path, server_address, strlen(server_address));
-
-        if (connect(server_socket, (struct sockaddr*)&sockaddr, sizeof(struct sockaddr_un)) == -1)
-            print_error_and_exit("Error while connecting to server in connect_to_server");
-
-        bind_socket = socket(AF_UNIX, SOCK_DGRAM, 0);
-        if (bind_socket == -1)
-            print_error_and_exit("Error while using socket to bind_socket (local) in connect_to_server");
-
-        struct sockaddr_un bind_sockaddr;
-        memset(&bind_sockaddr, 0, sizeof(struct sockaddr_un));
-        bind_sockaddr.sun_family = AF_UNIX;
-        sprintf(bind_sockaddr.sun_path, "%d", getpid());
-        if (bind(bind_socket, (struct sockaddr*)&bind_sockaddr, sizeof(struct sockaddr_un)) == -1)
-            print_error_and_exit("Error while using bind (local) in connect_to_server");
-    }
 }
 
 int check_choosen_field(int choosen_field) {
@@ -239,25 +199,14 @@ void game_loop() {
 void register_to_server_clients_list() {
     char msg[MAX_MESSAGE_LENGTH + 1];
     sprintf(msg, "save| |%s", client_name);
-    if (is_connection_local) {
-        if (sendto(bind_socket, msg, MAX_MESSAGE_LENGTH, 0,
-                   (struct sockaddr*)&sockaddr, sizeof(struct sockaddr_un)) == -1)
-            print_error_and_exit("Error while trying to register to server's clients list");
-    } else {
-        if (send(server_socket, msg, MAX_MESSAGE_LENGTH, 0) == -1)
-            print_error_and_exit("Error while trying to register to server's clients list");
-    }
+    if (send(server_socket, msg, MAX_MESSAGE_LENGTH, 0) == -1)
+        print_error_and_exit("Error while trying to register to server's clients list");
 }
 
 void client_loop() {
-    while(1) {
-        if (is_connection_local) {
-            if (recv(bind_socket, buffer, MAX_MESSAGE_LENGTH, 0) == -1)
-                print_error_and_exit("Error while listening to bind socket using recv()");
-        } else {
-            if (recv(server_socket, buffer, MAX_MESSAGE_LENGTH, 0) == -1)
-                print_error_and_exit("Error while listening to server socket using recv()");
-        }
+    while(1) {  
+        if (recv(server_socket, buffer, MAX_MESSAGE_LENGTH, 0) == -1)
+            print_error_and_exit("Error while listening to server socket using recv()");
         
         // printf("Wiadomosc od servera %s\n", buffer);
         task = strtok(buffer, "|");
@@ -266,7 +215,6 @@ void client_loop() {
         pthread_mutex_lock(&mutex);
 
         if (!strcmp(task, "ping")) {
-            // printf("Ping received\n");
             char msg[MAX_MESSAGE_LENGTH + 1];
             sprintf(msg, "ping_response| |%s", client_name);
             if (send(server_socket, msg, MAX_MESSAGE_LENGTH, 0) == -1)
@@ -280,6 +228,7 @@ void client_loop() {
 
             else if (!strcmp(task_args, "server_full")) {
                 printf("Server is full!\n");
+                if (is_local) unlink(client_name);
                 exit(1);
             }
 
@@ -318,18 +267,21 @@ void client_loop() {
         else if (!strcmp(task, "disconnect")) {
             printf("Your opponent has disconnected from the server\n");
             close(server_socket);
+            if (is_local) unlink(client_name);
             exit(0);
         }
 
         else if (!strcmp(task, "server_close")) {
             printf("Server has been closed\n");
             close(server_socket);
+            if (is_local) unlink(client_name);
             exit(0);
         }
 
         else if (!strcmp(task, "no_ping_response")) {
             printf("No ping response\n");
             close(server_socket);
+            if (is_local) unlink(client_name);
             exit(0);
         }
 
@@ -337,37 +289,79 @@ void client_loop() {
     }
 }
 
+void connect_to_network_server() {
+    struct addrinfo hints;
+    memset(&hints, 0, sizeof(struct addrinfo));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_DGRAM;
+
+    struct addrinfo *res;
+
+    if (getaddrinfo(server_address, server_port, &hints, &res) != 0)
+        print_error_and_exit("Error while using getaddrinfo in connect_to_network_server");
+
+    if ((server_socket = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1) 
+        print_error_and_exit("Error while using socket (network) in connect_to_network_server");
+
+    if (connect(server_socket, res->ai_addr, res->ai_addrlen) == -1)
+        print_error_and_exit("Error while using connect in connect_to_network_server");
+
+    freeaddrinfo(res);
+}
+
+void connect_to_local_server() {
+    server_socket = socket(AF_UNIX, SOCK_DGRAM, 0);
+    if (server_socket == -1)
+        print_error_and_exit("Error while using socket (local) in connect_to_local_server");
+
+    struct sockaddr_un sockaddr;
+    memset(&sockaddr, 0, sizeof(struct sockaddr_un));
+    sockaddr.sun_family = AF_UNIX;
+    strcpy(sockaddr.sun_path, server_address);
+
+    struct sockaddr_un client_sockaddr;
+    memset(&client_sockaddr, 0, sizeof(struct sockaddr_un));
+    client_sockaddr.sun_family = AF_UNIX;
+    strcpy(client_sockaddr.sun_path, client_name);
+
+    if (bind(server_socket, (struct sockaddr*)&client_sockaddr, sizeof(client_sockaddr)) == -1)
+        print_error_and_exit("Error while using bind (local) in connect_to_local_server");
+
+    if (connect(server_socket, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) == -1)
+        print_error_and_exit("Error while using connect in connect_to_local_server");
+}
+
 int main(int argc, char** argv) {
-    if (argc != 4) {
+    if ((argc !=5 && !strcmp(argv[2], "network")) || (argc != 4 && !strcmp(argv[2], "local"))) {
         fprintf(stderr, "Not a suitable number of program parameters. "
-                        "Expected: ./client client_name connect_mode server_address \n");
+                        "Expected: ./client client_name connect_mode server_address (and server_port if connect_mode == network)\n");
         return 1;
     }
 
     client_name = argv[1];
-    char* connect_mode = argv[2];
-    char* server_address = argv[3];
+    connect_mode = argv[2];
+    server_address = argv[3];
+    if (!strcmp(connect_mode, "network")) {
+        server_port = argv[4];
+    }
+
+    signal(SIGINT, handle_sigint);
 
     if (!strcmp(connect_mode, "network")) {
-        is_connection_local = 0;
+        connect_to_network_server();
+        is_local = 0;
     } else {
         if (!strcmp(connect_mode, "local")) {
-            is_connection_local = 1;
+            connect_to_local_server();
+            is_local = 1;
         } else {
             fprintf(stderr, "Wrong connect_mode given\n");
             exit(1);
         }
     }
 
-    signal(SIGINT, handle_sigint);
-
-    // printf("Lacze sie z serwerem\n");
-    connect_to_server(server_address);
-
-    // printf("Rejestruje sie na serwerze\n");
     register_to_server_clients_list();
 
-    // printf("Wchodze do petli klienta\n");
     client_loop();
 
     return 0;

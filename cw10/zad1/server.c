@@ -25,6 +25,7 @@ client *clients[MAX_CLIENTS];
 
 int local_socket;
 int network_socket;
+char* socket_path;
 
 int get_client_by_name(char *client_name) {
     for (int i = 0; i < MAX_CLIENTS; i++) {
@@ -80,8 +81,6 @@ void save_client(int client_fd, char *client_name) {
         clients_connected++;
 
         set_opponent(client_fd, assigned_index);
-
-        // printf("opponent %d \n", client->opponent_fd);
 
         if (client->opponent_fd == -1) {
             if (send(client_fd, "save_response|no_opponent", MAX_MESSAGE_LENGTH, 0) == -1)
@@ -140,6 +139,7 @@ void sigint_handle(int signo) {
     }
     close(network_socket);
     close(local_socket);
+    unlink(socket_path);
     printf("Server closed successfully...\n");
     exit(0);
 }
@@ -155,7 +155,6 @@ void remove_disconnected_clients() {
 void test_client_connections() {
     for (int i = 0; i < MAX_CLIENTS; i++) {
         if (clients[i] != NULL) {
-            // printf("Ping sent to %s\n", clients[i]->name);
             if (send(clients[i]->fd, "ping|", MAX_MESSAGE_LENGTH, 0) == -1)
                 print_error_and_exit("Error while testing client connection");
             clients[i]->status = DISABLED;
@@ -164,7 +163,6 @@ void test_client_connections() {
 }
 
 void pinging() {
-    // printf("Ping loop starting\n");
     while(1) {
         sleep(5);
         printf("Pinging\n");
@@ -210,7 +208,7 @@ int poll_sockets(int network_socket, int local_socket) {
     return fd_to_read;
 }
 
-void start_local_socket(char *socket_path) {
+void start_local_socket() {
     if ((local_socket = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
         print_error_and_exit("Error while using socket in start_local_socket");
     
@@ -256,10 +254,8 @@ void server_loop() {
     while(1) {
         int fd_to_read = poll_sockets(network_socket, local_socket);
 
-        // printf("descriptor %d\n", fd_to_read);
 // accepting connections from clients
         if (fd_to_read == local_socket || fd_to_read == network_socket) {
-            // printf("Nawiazuje polaczenie z klientem\n");
             if ((fd_to_read = accept(fd_to_read, NULL, NULL)) == -1) 
                 print_error_and_exit("Error while using accept in poll_sockets");
         }
@@ -314,13 +310,13 @@ int main(int argc, char** argv) {
     }
 
     char* port = argv[1];
-    char* socket_path = argv[2];
+    socket_path = argv[2];
 
     signal(SIGINT, sigint_handle);
 
     memset(&clients, 0, sizeof(clients));
 
-    start_local_socket(socket_path);
+    start_local_socket();
     start_network_socket(port);
 
     pthread_t pinging_thread;

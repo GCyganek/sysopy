@@ -202,7 +202,6 @@ void client_loop() {
         pthread_mutex_lock(&mutex);
 
         if (!strcmp(task, "ping")) {
-            // printf("Ping received\n");
             char msg[MAX_MESSAGE_LENGTH + 1];
             sprintf(msg, "ping_response| |%s", client_name);
             if (send(server_socket, msg, MAX_MESSAGE_LENGTH, 0) == -1)
@@ -335,13 +334,10 @@ int main(int argc, char** argv) {
 
     signal(SIGINT, handle_sigint);
 
-    // printf("Lacze sie z serwerem\n");
     connect_to_server();
 
-    // printf("Rejestruje sie na serwerze\n");
     register_to_server_clients_list();
 
-    // printf("Wchodze do petli klienta\n");
     client_loop();
 
     return 0;
